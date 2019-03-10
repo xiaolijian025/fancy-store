@@ -3,7 +3,7 @@
         <headers :tabname="$t('m.HeaderMember')"></headers>
         <transition :name="slidename">
             <div class="container" v-show="mainarea">
-                <div class="floor floor_one">
+                <div class="floor floor_one" @click="toLogin">
                     <img src="../../../public/img/github.png" alt />
                     <p>Open Free Share</p>
                 </div>
@@ -52,6 +52,9 @@ export default {
         /*我的地址*/
         onAddress() {
             this.$router.push("./address");
+        },
+        toLogin() {
+            this.$router.push("./login");
         }
     }
 };

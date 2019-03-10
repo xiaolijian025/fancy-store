@@ -3,7 +3,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import i18n from "./lang";
-import axios from "./assets/js/axios";
+import axios from "./utils/axios";
 import VueTouch from "vue-touch";
 import VueLazyLoad from "vue-lazyload";
 import Vconsole from "vconsole";

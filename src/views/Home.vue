@@ -53,7 +53,7 @@
 
 <script>
 import Swiper from "swiper";
-
+import { apiGetAllProduct } from "../api/product.js";
 export default {
     data() {
         return {
@@ -77,8 +77,9 @@ export default {
             observer: true, //修改swiper自己或子元素时，自动初始化swiper
             observeParents: true //修改swiper的父元素时，自动初始化swiper
         });
-        this.getGoodsList();
-        this.getBannerList();
+        // this.getGoodsList();
+        // this.getBannerList();
+        this.getProductData();
         /*判断动画是进还是出*/
         const slideArr = ["category", "cart", "member"];
         slideArr.includes(this.$store.state.comname) ? (this.slidename = "slide-back") : (this.slidename = "slide-go");
@@ -86,6 +87,11 @@ export default {
     },
 
     methods: {
+        async getProductData() {
+            let res = await apiGetAllProduct();
+            console.log("res", res);
+        },
+
         /*切换语言包 */
         changeLang() {
             this.$i18n.locale == "zh" ? (this.$i18n.locale = "en") : (this.$i18n.locale = "zh");
