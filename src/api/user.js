@@ -1,9 +1,8 @@
 import axios from "../utils/axios";
 
-export function apiLogin(phone, passwd) {
-    console.log("1111");
+export function apiLogin(user, pwd) {
     return axios.post(`/user/login`, {
-        phoneNumber: phone,
-        passwd: passwd
+        user: user,
+        pwd: pwd
     });
 }

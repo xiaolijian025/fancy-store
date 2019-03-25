@@ -25,7 +25,6 @@ export default {
     },
     methods: {
         async onLogin() {
-            console.log("222");
             let res = await apiLogin(this.userAccount, this.userPasswd);
             console.log("res", res);
         }
