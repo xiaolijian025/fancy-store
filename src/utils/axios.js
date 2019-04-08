@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const http = axios.create({
-    baseURL: process.env.NODE_ENV == "development" ? "http://127.0.0.1:9093/" : "xxx",
+    baseURL: process.env.NODE_ENV == "development" ? "" : "xxx",
     timeout: 5000 // request timeout
 });
 // http request 拦截器

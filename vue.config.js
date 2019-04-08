@@ -2,6 +2,17 @@ const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPl
 
 module.exports = {
     publicPath: "./",
+    devServer: {
+        proxy: {
+            "/": {
+                target: "http://localhost:9093/", //对应自己的接口
+                changeOrigin: true,
+                pathRewrite: {
+                    "^/api": "/"
+                }
+            }
+        }
+    },
     css: {
         loaderOptions: {
             css: {

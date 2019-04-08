@@ -10,6 +10,8 @@ import Vconsole from "vconsole";
 import fastclick from "fastclick";
 import Raven from "raven-js";
 import RavenVue from "raven-js/plugins/vue";
+import ToastBox from "./components/ToastBox/index"; //全局Toast弹窗
+Vue.use(ToastBox);
 import { mapGetters, mapMutations } from "vuex";
 // import "../public/js/rem.js";
 // 控制台插件
@@ -27,12 +29,12 @@ require("../mock");
 fastclick.attach(document.body);
 
 // Sentry错误日志监控
-Raven.config("https://ce431a99e0884612a053541eef0f2810@sentry.io/1245961", {
-    release: process.env.RELEASE_VERSION,
-    debug: true
-})
-    .addPlugin(RavenVue, Vue)
-    .install();
+// Raven.config('https://ce431a99e0884612a053541eef0f2810@sentry.io/1245961', {
+//   release: process.env.RELEASE_VERSION,
+//   debug: true
+// })
+//   .addPlugin(RavenVue, Vue)
+//   .install()
 
 // 图片懒加载
 Vue.use(VueLazyLoad, {

@@ -12,10 +12,10 @@
                     <div class="swiper-pagination"></div>
                 </div>
 
-                <div class="content" v-cloak>
+                <div class="content">
                     <div v-for="(productItem, productIndex) in productList" class="floorItem" :key="productIndex">
                         <div class="productTop flex-between" @click="onCategory(productIndex)">
-                            <p class="productTop-text">{{ productItem.Category.TopText }}</p>
+                            <!-- <p class="productTop-text">{{ productItem.Category.TopText }}</p> -->
                             <div class="flex-align-center">
                                 <p class="productTop-text">{{ productIndex + 1 }}F</p>
                                 <i class="arrowImg"></i>
@@ -28,13 +28,13 @@
                                         <div @click="onGoodsDetail(goodsItem, goodsItem.CategoryId)">
                                             <img v-lazy="goodsItem.GoodsImage" class="itemImg" />
                                             <div>
-                                                <p class="goods-name text-ellipsis">{{ goodsItem.GoodsName }}</p>
+                                                <p class="goods-name text-ellipsis">{{ goodsItem.title }}</p>
                                             </div>
                                         </div>
 
                                         <div class="addCartBox flex-between">
                                             <p>
-                                                <span class="goods-price">¥ {{ goodsItem.GoodsPrice }}</span>
+                                                <span class="goods-price">¥ {{ goodsItem.priceNow }}</span>
                                             </p>
                                             <i class="goods_cart" @click="onAddCart(goodsItem, goodsItem.GoodsName)" v-show="!goodsItem.shopAddCart"></i>
                                             <i class="goods_cart_select" @click="onAddCart(goodsItem.GoodsName)" v-show="goodsItem.shopAddCart"></i>
@@ -53,10 +53,11 @@
 
 <script>
 import Swiper from "swiper";
-import { apiGetAllProduct } from "../api/product.js";
+import { apiGetProduct } from "../api/product.js";
 export default {
     data() {
         return {
+            pageNum: 0,
             bannerList: [],
             productList: [],
             slidename: "slide-back"
@@ -88,8 +89,9 @@ export default {
 
     methods: {
         async getProductData() {
-            let res = await apiGetAllProduct();
-            console.log("res", res);
+            let res = await apiGetProduct(this.pageNum);
+            this.productList = res.data.result;
+            console.log("this.productList", this.productList);
         },
 
         /*切换语言包 */

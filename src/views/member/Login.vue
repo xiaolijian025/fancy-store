@@ -13,8 +13,8 @@ import { apiLogin } from "../../api/user.js";
 export default {
     data() {
         return {
-            userAccount: "111",
-            userPasswd: "111"
+            userAccount: "123",
+            userPasswd: "abc"
         };
     },
     components: {
@@ -26,6 +26,15 @@ export default {
     methods: {
         async onLogin() {
             let res = await apiLogin(this.userAccount, this.userPasswd);
+            if (res.data.code == 0) {
+                this.$router.push({
+                    path: "/"
+                });
+            } else {
+                this.$toastBox.showToastBox({
+                    toast: res.data.msg
+                });
+            }
             console.log("res", res);
         }
     }
@@ -34,14 +43,26 @@ export default {
 
 <style lang="less" scoped>
 .login {
-    margin-top: 88px;
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 268px;
     input {
         display: block;
         margin-bottom: 20px;
+        border: 1px solid #ccc;
+        padding: 10px;
     }
 }
 .login_btn {
-    width: 40px;
-    height: 40px;
+    width: 100px;
+    line-height: 30px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background: blue;
+    color: white;
+    text-align: center;
+    margin: 0 auto;
+    margin-top: 80px;
+    font-size: 20px;
 }
 </style>
