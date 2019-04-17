@@ -5,17 +5,17 @@
             <div class="container flex" id="container" v-show="mainarea" v-cloak>
                 <div class="leftbar">
                     <div class="barItem" v-for="(menuItem, menuIndex) in menuList" :key="menuIndex">
-                        <p :class="{ active: menuIndex === $store.state.tabindex }" class="menu-text" @click="onBar(menuIndex)">{{ menuItem.cat_name }}</p>
+                        <p :class="{ active: menuIndex === $store.state.tabindex }" class="menu-text" @click="onBar(menuIndex, menuItem.title)">{{ menuItem.title }}</p>
                     </div>
                 </div>
                 <div class="rightContent">
-                    <div class="rightItem" v-for="(categoryItem, categoryIndex) in categoryContent.cart" @click="onDetail(categoryItem)" :key="categoryIndex">
+                    <div class="rightItem" v-for="(categoryItem, categoryIndex) in categoryList" @click="onDetail(categoryItem)" :key="categoryIndex">
                         <div class="category-item flex">
                             <div class="item flex detail-item">
-                                <div class="goods-img"><img v-lazy="categoryItem.GoodsImage" /></div>
+                                <div class="goods-img"><img v-lazy="categoryItem.imgCover" /></div>
                                 <div class="goods-textBox">
-                                    <p class="goods-name">{{ categoryItem.GoodsName }}</p>
-                                    <p class="goods-coach">¥{{ categoryItem.GoodsPrice }}</p>
+                                    <p class="goods-name">{{ categoryItem.title }}</p>
+                                    <p class="goods-coach">¥{{ categoryItem.priceNow }}</p>
                                     <div class="goods-cartBox"><i class="goods_cart" @click.stop="onAddCart(categoryItem)"></i></div>
                                 </div>
                             </div>
@@ -30,13 +30,17 @@
 
 <script>
 import { mapGetters } from "vuex";
+import { apiGetProduct } from "../../api/product.js";
+import { apiGetCategoryMenu } from "../../api/category.js";
 export default {
     data() {
         return {
             menuList: [],
             categoryList: [],
             categoryContent: [],
-            slidename: "slide-back"
+            slidename: "slide-back",
+            pageNum: 0,
+            type: "糖果·巧克力"
         };
     },
     components: {
@@ -58,19 +62,22 @@ export default {
     methods: {
         /*获取分类栏目*/
         async getMenuList() {
-            let res = await this.$http.get("/api/menudata");
-            this.menuList = res.data.data;
+            let res = await apiGetCategoryMenu();
+            // res.data.result = res.data.result.unshift();
+            this.menuList = res.data.result.slice(1, res.data.result.length);
         },
         /*获取分类列表*/
         async getCategoryList() {
-            let res = await this.$http.post("/api/categorydata");
-            this.categoryList = res.data.data;
-            this.categoryContent = this.categoryList[0];
+            let res = await apiGetProduct(this.pageNum, this.type);
+            this.categoryList = res.data.result;
         },
         /*切换分类*/
-        onBar(index) {
+        onBar(index, category) {
+            console.log("category", category);
             this.setTabindex(index);
-            this.categoryContent = this.categoryList[this.$store.state.tabindex];
+            this.type = category;
+            this.getCategoryList();
+            //   this.categoryContent = this.categoryList[this.$store.state.tabindex];
         },
         /*添加购物车*/
         onAddCart(item) {
@@ -95,6 +102,9 @@ export default {
 
 <style lang="less" scoped>
 @import "../../../public/less/variable.less";
+.container {
+    align-items: flex-start;
+}
 .category {
     padding-top: 80px;
     padding-bottom: 88px;

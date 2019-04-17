@@ -5,33 +5,33 @@
             <div class="container" v-show="mainarea">
                 <div v-show="!havePage"><nopage></nopage></div>
                 <div v-show="havePage">
-                    <div class="cart-item" :class="{ selected: itemIndex === cartIndex }" v-for="(cartItem, cartIndex) in $store.state.carts" :key="cartIndex" @click="onDetail(cartItem)">
+                    <div class="cart-item" :class="{ selected: itemIndex === cartIndex }" v-for="(cartItem, cartIndex) in cartsData" :key="cartIndex" @click="onDetail(cartItem)">
                         <v-touch @swipeleft="onSwipeLeft(cartIndex)" @swiperight="onSwipeRight(cartIndex)">
-                            <div class="cart-content flex-align-center">
+                            <div class="cart-content flex">
                                 <div class="goods-radio" @click.stop="onGoodsRadio(cartItem)">
                                     <i class="cart_radio" v-show="!cartItem.goodsRadio"></i> <i class="cart_radio_select" v-show="cartItem.goodsRadio"></i>
                                 </div>
                                 <div class="flex">
-                                    <div class="goods-img"><img v-lazy="cartItem.GoodsImage" /></div>
+                                    <div class="goods-img"><img v-lazy="cartItem.imgCover" /></div>
                                     <div class="goods-textBox">
-                                        <p class="goods-name">{{ cartItem.GoodsName }}</p>
+                                        <p class="goods-name">{{ cartItem.title }}</p>
                                         <div class="goodsOp flex">
-                                            <i class="shop_cut" @click.stop="onCutCart(cartItem)"></i> <input type="text" :value="cartItem.GoodsNum" />
+                                            <i class="shop_cut" @click.stop="onCutCart(cartItem)"></i> <input type="text" :value="cartItem.num" />
                                             <i class="shop_add" @click.stop="onAddCart(cartItem)"></i>
                                         </div>
-                                        <p class="goods-coach">¥{{ cartItem.GoodsPrice }}</p>
+                                        <p class="goods-coach">¥{{ cartItem.priceNow }}</p>
                                     </div>
                                 </div>
                             </div>
                             <!--v-show="itemIndex === cartIndex"-->
-                            <div class="remove" @click.stop="onRemove(cartItem)"><i></i></div>
+                            <div class="remove" @click.stop="onRemove(cartItem, cartIndex)"><i></i></div>
                         </v-touch>
                     </div>
                 </div>
             </div>
         </transition>
 
-        <div class="cartBottom-detail flex-between" v-show="$store.state.carts" v-cloak>
+        <div class="cartBottom-detail flex-space" v-show="$store.state.carts" v-cloak>
             <div class="flex">
                 <div class="shopRadio" @click="onSelectAll()"><i class="cart_radio" v-show="!goodsRadioAll"></i> <i class="cart_radio_select" v-show="goodsRadioAll"></i></div>
                 <div class="bottom-left">
@@ -49,6 +49,7 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
+import { apiGetCart, apiDeleteCart, apiUpdateCart } from "../../api/cart.js";
 export default {
     data() {
         return {
@@ -56,7 +57,8 @@ export default {
             allCoach: 0,
             radioArr: [],
             havePage: false,
-            itemIndex: ""
+            itemIndex: "",
+            cartsData: []
         };
     },
     components: {
@@ -73,63 +75,78 @@ export default {
         slideArr.includes(this.$store.state.comname) ? (this.slidename = "slide-go") : (this.slidename = "slide-back");
         this.setComname("cart");
 
-        if (this.$store.state.carts.length == 0) {
-            this.havePage = false;
-        } else {
-            this.havePage = true;
-            this.$store.state.carts.forEach(item => {
-                typeof item.goodsRadio == "undefined" && this.$set(item, "goodsRadio", false);
-            });
-        }
+        this.getCart();
     },
     methods: {
+        async getCart() {
+            let res = await apiGetCart();
+            console.log("res", res);
+            this.cartsData = res.data.result;
+
+            console.error("this.cartsData", this.cartsData);
+            if (this.cartsData.length == 0) {
+                this.havePage = false;
+            } else {
+                this.havePage = true;
+                this.cartsData.forEach(item => {
+                    typeof item.goodsRadio == "undefined" && this.$set(item, "goodsRadio", false);
+                });
+            }
+            console.error("cart", this.cartsData);
+        },
         /*选择单个商品*/
         onGoodsRadio(item) {
-            const that = this;
-            that.radioArr = [];
+            this.radioArr = [];
             item.goodsRadio = !item.goodsRadio;
-            that.$store.state.carts.forEach(itemGoods => {
-                that.radioArr.push(itemGoods.goodsRadio);
+            this.cartsData.forEach(itemGoods => {
+                this.radioArr.push(itemGoods.goodsRadio);
             });
-            that.radioArr.indexOf(false) == -1 ? (that.goodsRadioAll = true) : (that.goodsRadioAll = false);
-            that.onCalAllCoach();
+            this.radioArr.indexOf(false) == -1 ? (this.goodsRadioAll = true) : (this.goodsRadioAll = false);
+            this.onCalAllCoach();
         },
         /*选择全部商品*/
         onSelectAll() {
             this.goodsRadioAll = !this.goodsRadioAll;
             this.goodsRadioAll
-                ? this.$store.state.carts.forEach(item => {
+                ? this.cartsData.forEach(item => {
                       item.goodsRadio = true;
                   })
-                : this.$store.state.carts.forEach(item => {
+                : this.cartsData.forEach(item => {
                       item.goodsRadio = false;
                   });
             this.onCalAllCoach();
         },
         /*添加商品数量*/
-        onAddCart(item) {
-            item.GoodsNum++;
+        async onAddCart(item) {
+            let res = await apiUpdateCart(item._id, "add");
+            item.num++;
+            console.log("res", res);
             this.onCalAllCoach();
         },
         /*减少商品数量*/
-        onCutCart(item) {
-            if (item.GoodsNum > 1) {
-                item.GoodsNum--;
+        async onCutCart(item) {
+            if (item.num > 1) {
+                let res = await apiUpdateCart(item._id, "cut");
+                item.num--;
+
                 this.onCalAllCoach();
             }
         },
         /*计算价格*/
         onCalAllCoach() {
             this.allCoach = 0;
-            this.$store.state.carts.forEach(item => {
-                item.goodsRadio && (this.allCoach += item.GoodsNum * item.GoodsPrice);
+            this.cartsData.forEach(item => {
+                item.goodsRadio && (this.allCoach += item.num * item.priceNow);
             });
         },
         /*删除商品*/
-        onRemove(item) {
-            let index = this.$store.state.carts.indexOf(item);
-            this.$store.state.carts.splice(index, 1);
-            this.itemIndex = "";
+        async onRemove(item, index) {
+            let res = await apiDeleteCart(item._id);
+            console.log("res", res);
+            this.cartsData.splice(index, 1);
+            //   let index = this.$store.state.carts.indexOf(item);
+            //   this.$store.state.carts.splice(index, 1);
+            //   this.itemIndex = "";
         },
         /*提交订单*/
         onOrder() {
@@ -211,7 +228,7 @@ export default {
 }
 
 .goods-radio {
-    margin: 0 20px;
+    margin: 0 10px;
 
     i {
         width: 68px;
@@ -271,7 +288,6 @@ export default {
 
 .cartBottom-detail {
     height: 80px;
-    line-height: 80px;
     font-size: 28px;
     width: 100%;
     position: absolute;
@@ -281,7 +297,7 @@ export default {
     /*background:red;*/
     i {
         width: 68px;
-        height: 58px;
+        height: 68px;
         display: inline-block;
         background-size: 100%;
     }

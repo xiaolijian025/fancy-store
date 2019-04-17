@@ -3,7 +3,7 @@
         <message ref="message"></message> <headers :tabname="$t('m.HeaderIndex')"></headers>
         <div class="langBox" @click="changeLang">{{ $t("m.local") }}</div>
         <transition :name="slidename">
-            <div class="container" v-show="mainarea">
+            <div class="container">
                 <!-- Swiper -->
                 <div class="swiper-container">
                     <div class="swiper-wrapper">
@@ -11,37 +11,19 @@
                     </div>
                     <div class="swiper-pagination"></div>
                 </div>
-
-                <div class="content">
-                    <div v-for="(productItem, productIndex) in productList" class="floorItem" :key="productIndex">
-                        <div class="productTop flex-between" @click="onCategory(productIndex)">
-                            <!-- <p class="productTop-text">{{ productItem.Category.TopText }}</p> -->
-                            <div class="flex-align-center">
-                                <p class="productTop-text">{{ productIndex + 1 }}F</p>
-                                <i class="arrowImg"></i>
-                            </div>
-                        </div>
-                        <div class="productContent">
-                            <div class="productBox flex" ref="div">
-                                <div class="productItem" v-for="(goodsItem, goodsIndex) in productItem.SalesProduct" :key="goodsIndex">
-                                    <div class="itemBox">
-                                        <div @click="onGoodsDetail(goodsItem, goodsItem.CategoryId)">
-                                            <img v-lazy="goodsItem.GoodsImage" class="itemImg" />
-                                            <div>
-                                                <p class="goods-name text-ellipsis">{{ goodsItem.title }}</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="addCartBox flex-between">
-                                            <p>
-                                                <span class="goods-price">¥ {{ goodsItem.priceNow }}</span>
-                                            </p>
-                                            <i class="goods_cart" @click="onAddCart(goodsItem, goodsItem.GoodsName)" v-show="!goodsItem.shopAddCart"></i>
-                                            <i class="goods_cart_select" @click="onAddCart(goodsItem.GoodsName)" v-show="goodsItem.shopAddCart"></i>
-                                        </div>
-                                    </div>
+                <div class="product_header">热门推荐</div>
+                <div class="content flex">
+                    <div v-for="(productItem, productIndex) in productList" class="product_item" :key="productIndex">
+                        <img :src="productItem.imgCover" alt />
+                        <div class="flex-space">
+                            <div class="product_item_text">
+                                <div>{{ productItem.title }}</div>
+                                <div class="product-price flex">
+                                    <div>{{ productItem.priceNow }}</div>
+                                    <div class="product-price-origin">{{ productItem.priceOrigin }}</div>
                                 </div>
                             </div>
+                            <div class="goods-cartBox"><i class="goods_cart" @click.stop="onAddCart(productItem)"></i></div>
                         </div>
                     </div>
                 </div>
@@ -53,7 +35,10 @@
 
 <script>
 import Swiper from "swiper";
-import { apiGetProduct } from "../api/product.js";
+import { apiGetProduct, apiGetBanner } from "../api/product.js";
+import { apiAddCart } from "../api/cart.js";
+import "../../public/css/swiper.min.css";
+
 export default {
     data() {
         return {
@@ -70,7 +55,9 @@ export default {
     },
     mounted() {
         new Swiper(".swiper-container", {
-            pagination: ".swiper-pagination",
+            pagination: {
+                el: ".swiper-pagination"
+            },
             paginationClickable: true,
             spaceBetween: 30,
             autoplay: 1500,
@@ -79,7 +66,7 @@ export default {
             observeParents: true //修改swiper的父元素时，自动初始化swiper
         });
         // this.getGoodsList();
-        // this.getBannerList();
+        this.getBannerList();
         this.getProductData();
         /*判断动画是进还是出*/
         const slideArr = ["category", "cart", "member"];
@@ -89,7 +76,7 @@ export default {
 
     methods: {
         async getProductData() {
-            let res = await apiGetProduct(this.pageNum);
+            let res = await apiGetProduct(this.pageNum, "热门");
             this.productList = res.data.result;
             console.log("this.productList", this.productList);
         },
@@ -105,8 +92,8 @@ export default {
         },
         /*获取轮播列表*/
         async getBannerList() {
-            let res = await this.$http.get("/api/bannerdata");
-            this.bannerList = res.data.data;
+            let res = await apiGetBanner();
+            this.bannerList = res.data.result;
         },
         /*进入商品详情*/
         onGoodsDetail(item, id) {
@@ -119,16 +106,17 @@ export default {
             this.setGoods(item);
         },
         /*添加到购物车*/
-        onAddCart(item) {
-            if (!this.$store.state.carts.includes(item)) {
-                if (!this.$refs.footer.showNum) {
-                    this.cartLength = this.$store.state.carts.length + 1;
-                    this.$refs.footer.showNum = true;
-                    this.setCarts(item);
-                }
-            } else {
-                this.$refs.message.messageShow = true;
-            }
+        async onAddCart(item) {
+            let res = await apiAddCart(item._id);
+            //   if (!this.$store.state.carts.includes(item)) {
+            //     if (!this.$refs.footer.showNum) {
+            //       this.cartLength = this.$store.state.carts.length + 1;
+            //       this.$refs.footer.showNum = true;
+            //       this.setCarts(item);
+            //     }
+            //   } else {
+            //     this.$refs.message.messageShow = true;
+            //   }
         },
         /*前往分类页面*/
         onCategory(index) {
@@ -141,57 +129,49 @@ export default {
 
 <style lang="less" scoped>
 @import "../../public/less/variable.less";
-@import "../../public/css/swiper.min.css";
+// @import "../../public/css/swiper.min.css";
 .swiper-slide img {
     width: 100%;
     height: 100%;
 }
 .container {
     padding-bottom: 0;
+    font-size: 33px;
 }
-.productTop {
-    padding: 0 20px;
-    height: 60px;
-    line-height: 60px;
-    border-bottom: @base_boder;
-    border-top: @base_boder;
-    margin-bottom: 20px;
+.content {
+    //   margin-top: 20px;
+    flex-wrap: wrap;
+    padding-bottom: 88px;
 }
-
-.productTop-text {
-    font-size: 28px;
+.product_header {
+    font-size: 32px;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
 }
-
-.arrowImg {
-    width: 32px;
-    height: 32px;
-    background: url("../../public/img/icon/common_sprites.png") -10px -394px;
-}
-.floorItem:nth-last-child(1) {
-    margin-bottom: 88px;
-}
-.productItem {
-    width: 380px;
+.product_item {
+    width: 50%;
     box-sizing: border-box;
-    margin-bottom: 20px;
-    padding: 0 20px;
-    flex: 1;
-    &:nth-child(odd) {
-        margin-right: 2%;
-        border-right: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+    &:nth-of-type(even) {
+        border-right: none;
+    }
+    img {
+        width: 100%;
+        height: 360px;
     }
 }
-
-.itemImg {
-    width: 100%;
-    height: 100%;
+.product_item_text {
+    color: #666;
+    padding: 2px 16px;
 }
-
-.addCartBox {
+.goods-cartBox {
     i {
-        width: 40px;
+        display: inline-block;
+        width: 60px;
         height: 40px;
-        padding-right: 20px;
+        background: url("../../public/img/icon/common_sprites.png") -3px -73px; /* no */
+        background-size: 100%;
     }
 }
 

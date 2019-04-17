@@ -5,7 +5,7 @@ module.exports = {
     devServer: {
         proxy: {
             "/": {
-                target: "http://localhost:9093/", //对应自己的接口
+                target: "http://localhost:9093/api/", //对应自己的接口
                 changeOrigin: true,
                 pathRewrite: {
                     "^/api": "/"
@@ -22,7 +22,7 @@ module.exports = {
                 // options here will be passed to postcss-loader
                 plugins: [
                     require("postcss-px2rem")({
-                        remUnit: 32
+                        remUnit: 375
                     })
                 ]
             }
