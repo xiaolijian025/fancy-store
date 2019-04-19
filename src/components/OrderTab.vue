@@ -1,5 +1,5 @@
 <template>
-    <header class="flex-between flex-align-center">
+    <header class="flex-space flex">
         <div class="tab-item" :class="{ active: urlRouter == '/order' }">
             <router-link to="./order"> <p class="tab-title">全部</p> </router-link>
         </div>

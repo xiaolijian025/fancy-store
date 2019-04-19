@@ -151,7 +151,7 @@ export default {
         /*提交订单*/
         onOrder() {
             let orderArr = [];
-            this.$store.state.carts.forEach(item => {
+            this.cartsData.forEach(item => {
                 item.goodsRadio && orderArr.push(item);
             });
 

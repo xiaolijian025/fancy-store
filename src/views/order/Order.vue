@@ -6,18 +6,18 @@
                 <div class="container" v-show="mainarea">
                     <div v-show="!havePage"><nopage></nopage></div>
                     <div class="order-item" v-show="havePage" v-cloak>
-                        <div v-for="(itemPay, itemIndex) in $store.state.pays" :key="itemIndex">
-                            <div class="order-top flex-between">
+                        <div v-for="(itemPay, itemIndex) in orderData" :key="itemIndex">
+                            <div class="order-top flex-space">
                                 <p>订单号xxxxx</p>
                                 <p>已支付</p>
                             </div>
                             <div class="order-content">
                                 <div class="flex">
-                                    <div class="order-img"><img :src="itemPay.GoodsImage" /></div>
+                                    <div class="order-img"><img :src="itemPay.imgCover" /></div>
                                     <div class="order-text">
                                         <p class="goods-name text-ellipsis">{{ itemPay.GoodsName }}</p>
-                                        <p class="goods-num">x{{ itemPay.GoodsNum }}</p>
-                                        <p class="goods-price">¥{{ itemPay.GoodsPrice }}</p>
+                                        <p class="goods-num">x{{ itemPay.num }}</p>
+                                        <p class="goods-price">¥{{ itemPay.priceNow }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -31,10 +31,12 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
+import { apiGetOrder } from "../../api/order.js";
 export default {
     data() {
         return {
-            havePage: false
+            havePage: false,
+            orderData: []
         };
     },
     components: {
@@ -46,14 +48,20 @@ export default {
         ...mapGetters(["this.$store.state.pays", "this.$store.state.ordercur", "this.$store.state.ordertab"])
     },
     mounted() {
+        this.getOrder();
         this.setOrdercur(1);
-        this.$store.state.pays === undefined ? (this.havePage = false) : (this.havePage = true);
+        this.orderData.length > 0 ? (this.havePage = false) : (this.havePage = true);
         this.$refs.noback.isBack = false;
         /*判断动画是进还是出*/
         this.$store.state.ordercur < this.$store.state.ordertab ? (this.slidename = "slide-back") : (this.slidename = "slide-go");
         this.setOrdertab(1);
     },
     methods: {
+        async getOrder() {
+            let res = await apiGetOrder();
+            this.orderData = res.data.result;
+            console.error("resorder", res);
+        },
         onSwipeLeft() {
             this.$router.push("./waitpay");
         },
@@ -90,5 +98,13 @@ export default {
 
 .order-content {
     padding-top: 20px;
+}
+.order-img {
+    width: 120px;
+    height: 120px;
+    img {
+        width: 100%;
+        height: 100%;
+    }
 }
 </style>

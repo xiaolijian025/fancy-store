@@ -6,9 +6,9 @@
                 <div v-show="!havePage"><nopage></nopage></div>
                 <div v-show="havePage">
                     <div class="chooseAddress" @click="onAddress()">
-                        <div class="flex-align-center chooseBox">
+                        <div class="flex chooseBox">
                             <i class="address_img"></i>
-                            <div class="flex-align-center flex-between">
+                            <div class="flex flex-space">
                                 <p v-show="!this.$store.state.chooseaddress">选择送货地址</p>
                                 <p v-show="this.$store.state.chooseaddress">{{ this.$store.state.chooseaddress }}</p>
                                 <i class="arrow_next"></i>
@@ -16,14 +16,14 @@
                         </div>
                     </div>
                     <div class="orderItem flex" v-for="(orderItem, orderIndex) in $store.state.orders" :key="orderIndex">
-                        <img :src="orderItem.GoodsImage" class="goodsImg" />
+                        <img :src="orderItem.imgCover" class="goodsImg" />
                         <div>
-                            <p class="goods-name">{{ orderItem.GoodsName }}</p>
-                            <p class="goods-num">x{{ orderItem.GoodsNum }}</p>
-                            <p class="goods-price">¥{{ orderItem.GoodsPrice }}</p>
+                            <p class="goods-name">{{ orderItem.title }}</p>
+                            <p class="goods-num">x{{ orderItem.num }}</p>
+                            <p class="goods-price">¥{{ orderItem.priceNow }}</p>
                         </div>
                     </div>
-                    <div class="orderBottom flex-between">
+                    <div class="orderBottom flex-space">
                         <span>总金额:{{ allCoach }}</span> <span @click="onOrder">结算</span>
                     </div>
                 </div>
@@ -34,12 +34,14 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
+import { apiAddOrder } from "../../api/order.js";
 export default {
     data() {
         return {
             allCoach: 0,
             havePage: false,
-            slidename: "slide-go"
+            slidename: "slide-go",
+            prodectId: []
         };
     },
     components: {
@@ -50,16 +52,13 @@ export default {
         ...mapGetters(["this.$store.state.orders", "this.$store.state.chooseaddress"])
     },
     mounted() {
-        let sums = [];
         this.$store.state.orders === undefined ? (this.havePage = false) : (this.havePage = true);
 
         this.$store.state.orders.forEach(item => {
-            sums.push(item.GoodsPrice);
+            //   sums.push(item.priceNow);
+            this.allCoach += item.priceNow * item.num;
+            this.prodectId.push(item._id);
         });
-        for (let i = 0; i < sums.length; i++) {
-            this.allCoach += parseInt(sums[i]);
-        }
-
         /*判断动画是进还是出*/
         const slideArr = ["goodsdetail", "cart"];
         slideArr.includes(this.$store.state.comname) ? (this.slidename = "slide-go") : (this.slidename = "slide-back");
@@ -68,8 +67,11 @@ export default {
 
     methods: {
         /*我的订单*/
-        onOrder() {
-            this.$router.push("./order");
+        async onOrder() {
+            console.log("this.prodectId", this.prodectId);
+            let res = await apiAddOrder(this.prodectId, this.$store.state.chooseaddress, this.allCoach);
+            console.log("res", res);
+            //   this.$router.push("./order");
             this.setPays(this.$store.state.orders);
         },
         /*选择地址*/
