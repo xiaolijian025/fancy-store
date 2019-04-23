@@ -1,5 +1,5 @@
 import axios from "axios";
-
+import { Toast } from "vant";
 const http = axios.create({
     baseURL: process.env.NODE_ENV == "development" ? "" : "xxx",
     timeout: 5000 // request timeout
@@ -32,6 +32,13 @@ http.interceptors.request.use(
 // http response 拦截器
 http.interceptors.response.use(
     response => {
+        console.error("response", response);
+        if (response.data.code == -1) {
+            Toast({
+                message: "用户未登陆",
+                position: "bottom"
+            });
+        }
         return response;
     },
     error => {

@@ -45,17 +45,17 @@
                         </div>
                     </div>
                 </div>
+                <el-input placeholder="输入电话号码" v-model="phone" clearable></el-input>
             </div>
         </transition>
-        <div class="pageBottom" @click="onSave">
-            <span class="tabbar-label">保存</span>
-        </div>
+        <div class="pageBottom" @click="onSave"><span class="tabbar-label">保存</span></div>
     </div>
 </template>
 
 <script>
 import init_city_picker from "../../assets/js/data.city.js";
 import { mapMutations } from "vuex";
+import { apiAddAddress } from "../../api/address.js";
 export default {
     data() {
         return {
@@ -67,7 +67,8 @@ export default {
             addressText: "请选择",
             activeProvince: 0,
             activeCity: 0,
-            activeArea: 0
+            activeArea: 0,
+            phone: ""
         };
     },
     components: {
@@ -100,7 +101,9 @@ export default {
             this.addressModel = false;
         },
         /*保存地址*/
-        onSave() {
+        async onSave() {
+            let res = await apiAddAddress(this.addressText, this.phone);
+            console.log("res", res);
             this.setAddress(this.addressText);
             this.$router.back();
         },
@@ -118,7 +121,7 @@ export default {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 510px;
+    height: 250px;
     z-index: 9;
     background: #f5f5f5;
     display: block !important;
@@ -126,19 +129,19 @@ export default {
 
 .addressBox ul {
     width: 33%;
-    height: 510px;
+    height: 250px;
+
     background: @base_color;
     overflow-y: scroll;
     overflow-x: auto;
 }
 
 .addressBox li {
-    font-size: 26px;
-    height: 62px;
-    line-height: 62px;
+    font-size: 13px;
+    line-height: 30px;
     color: @base_textColor;
     text-align: left;
-    padding-left: 50px;
+    padding-left: 25px;
 }
 
 .cityBox {
@@ -146,7 +149,8 @@ export default {
     top: 0;
     left: 33%;
     width: 100%;
-    height: 510px;
+    height: 250px;
+
     display: none;
     overflow-y: scroll;
     z-index: 19;
@@ -156,11 +160,11 @@ export default {
 
 .cityBox ul {
     width: 100%;
-    height: 510px;
+    height: 250px;
 }
 
 .cityBox li {
-    padding-left: 17px;
+    padding-left: 8px;
     text-align: left;
     border-bottom: 1px solid #e6e6e6;
 }
@@ -170,7 +174,8 @@ export default {
     top: 0;
     left: 33%;
     width: 33%;
-    height: 510px;
+    height: 250px;
+
     display: none;
     overflow-y: scroll;
     z-index: 9999;
@@ -189,11 +194,14 @@ export default {
 }
 
 input {
-    font-size: 32px;
+    font-size: 16px;
     width: 100%;
+    box-sizing: border-box;
     text-align: center;
-    margin-top: 30px;
+    margin-top: 15px;
     border: 1px solid #ccc;
+    line-height: 40px;
+    margin-bottom: 20px;
 }
 /*点击省份，出现城市*/
 
@@ -220,10 +228,9 @@ input {
     bottom: 0;
     background: @theme_background;
     width: 100%;
-    height: 80px;
-    line-height: 80px;
+    line-height: 40px;
     color: @base_color;
-    font-size: 28px;
+    font-size: 14px;
     text-align: center;
 }
 </style>

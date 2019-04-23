@@ -7,17 +7,17 @@
                     <img src="../../../public/img/github.png" alt />
                     <p>Open Free Share</p>
                 </div>
-                <div class="floor floor_item floor_two flex-align-center flex-between" @click="onInfo">
+                <div class="floor floor_item floor_two flex-space" @click="onInfo">
                     <p>{{ $t("m.member.info") }}</p>
-                    <i></i>
+                    <i class="el-icon-arrow-right"></i>
                 </div>
-                <div class="floor floor_item floor_two flex-align-center flex-between" @click="onOrder">
+                <div class="floor floor_item floor_two flex-space" @click="onOrder">
                     <p>{{ $t("m.member.order") }}</p>
-                    <i></i>
+                    <i class="el-icon-arrow-right"></i>
                 </div>
-                <div class="floor floor_item floor_two flex-align-center flex-between" @click="onAddress">
+                <div class="floor floor_item floor_two flex-space" @click="onAddress">
                     <p>{{ $t("m.member.address") }}</p>
-                    <i></i>
+                    <i class="el-icon-arrow-right"></i>
                 </div>
             </div>
         </transition>
@@ -68,13 +68,13 @@ export default {
 
 .floor_one {
     width: 100%;
-    height: 400px;
+    height: 200px;
     background: @theme_background;
     position: relative;
     img {
         position: absolute;
-        width: 180px;
-        height: 180px;
+        width: 9px;
+        height: 45px;
         left: 0;
         right: 0;
         top: 15%;
@@ -88,21 +88,15 @@ export default {
         margin: 0 auto;
         text-align: center;
         color: white;
-        font-size: 26px;
+        font-size: 13px;
     }
 }
 
 .floor_item {
-    padding: 0 20px;
-    height: 80px;
-    line-height: 80px;
-    font-size: 28px;
+    padding: 0 10px;
+    line-height: 40px;
+    font-size: 14px;
     background: @base_color;
-    margin-bottom: 40px;
-    i {
-        width: 40px;
-        height: 40px;
-        background: url("../../../public/img/icon/common_sprites.png") -10px -710px;
-    }
+    margin-bottom: 20px;
 }
 </style>

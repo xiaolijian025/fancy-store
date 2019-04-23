@@ -1,7 +1,7 @@
 <template>
     <header id="headerTab" class="flex flex-align-center">
-        <i @click="onBack"></i>
-        <p>{{ tabname }}</p>
+        <i class="el-icon-arrow-left" @click="onBack"></i>
+        <p class="tabname">{{ tabname }}</p>
     </header>
 </template>
 
@@ -15,6 +15,7 @@ export default {
     },
     methods: {
         onBack() {
+            console.log("111");
             if (this.isBack) {
                 this.$router.back();
             } else {
@@ -28,29 +29,25 @@ export default {
 <style lang="less" scoped>
 @import "../../public/less/base.less";
 header {
-    height: 80px;
     text-align: center;
     background: @theme_background;
     color: @base_color;
-    font-size: 26px;
-    line-height: 80px;
+    font-size: 14px;
+    height: 40px;
     width: 100%;
     z-index: 10;
     position: fixed;
     top: 0;
 }
 
-i {
-    width: 80px;
-    height: 80px;
-    margin-left: 20px;
-    background: url("../../public/img/icon/common_sprites.png") 0px 197px; /* no */
-    background-size: 100%;
+.tabname {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
 }
-
-p {
-    text-align: center;
-    width: 100%;
-    margin-right: 60px;
+i {
+    padding-left: 16px;
+    z-index: 10;
 }
 </style>

@@ -7,11 +7,13 @@
                 <div v-show="havePage">
                     <div class="chooseAddress" @click="onAddress()">
                         <div class="flex chooseBox">
-                            <i class="address_img"></i>
+                            <i class="el-icon-location-outline"></i>
                             <div class="flex flex-space">
                                 <p v-show="!this.$store.state.chooseaddress">选择送货地址</p>
-                                <p v-show="this.$store.state.chooseaddress">{{ this.$store.state.chooseaddress }}</p>
-                                <i class="arrow_next"></i>
+                                <!-- <p
+                  v-show="this.$store.state.chooseaddress"
+                >{{ this.$store.state.chooseaddress.address }}</p>-->
+                                <i class="el-icon-arrow-right"></i>
                             </div>
                         </div>
                     </div>
@@ -57,6 +59,7 @@ export default {
         this.$store.state.orders.forEach(item => {
             //   sums.push(item.priceNow);
             this.allCoach += item.priceNow * item.num;
+            console.log("item._id: ", typeof item._id);
             this.prodectId.push(item._id);
         });
         /*判断动画是进还是出*/
@@ -67,11 +70,38 @@ export default {
 
     methods: {
         /*我的订单*/
-        async onOrder() {
-            console.log("this.prodectId", this.prodectId);
-            let res = await apiAddOrder(this.prodectId, this.$store.state.chooseaddress, this.allCoach);
-            console.log("res", res);
-            //   this.$router.push("./order");
+        onOrder() {
+            this.$confirm("是否现在结算该订单?", "提示", {
+                confirmButtonText: "确定",
+                cancelButtonText: "稍后",
+                type: "warning"
+            })
+                .then(() => {
+                    this.addOrder("已付款");
+                })
+                .catch(() => {
+                    this.addOrder("待付款");
+                });
+        },
+        async addOrder(status) {
+            console.log("this.prodectId", Array.isArray(this.prodectId));
+            console.log("this.prodectId: ", this.prodectId);
+            let res = await apiAddOrder(this.prodectId, this.$store.state.chooseaddress, this.allCoach, status);
+            if ((status = "已付款")) {
+                this.$message({
+                    type: "success",
+                    message: "下单成功"
+                });
+                setTimeout(() => {
+                    this.$router.push({
+                        path: "/order"
+                    });
+                }, 1000);
+            } else {
+                this.$router.push({
+                    path: "/order"
+                });
+            }
             this.setPays(this.$store.state.orders);
         },
         /*选择地址*/
@@ -90,16 +120,16 @@ export default {
 <style lang="less" scoped>
 @import "../../../public/less/variable.less";
 .chooseBox {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    height: 100px;
-    padding: 0 20px;
-    font-size: 28px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    height: 50px;
+    padding: 0 10px;
+    font-size: 14px;
     border: 1px dashed @theme_background;
     img {
-        width: 40px;
-        height: 40px;
-        margin-right: 20px;
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
     }
     div {
         width: 100%;
@@ -110,25 +140,24 @@ export default {
 }
 
 .orderItem {
-    padding: 20px;
+    padding: 10px;
     border-bottom: 1px solid #ccc;
 }
 
 .goodsImg {
-    width: 200px;
-    height: 200px;
+    width: 100px;
+    height: 100px;
 }
 
 .orderBottom {
     position: fixed;
     bottom: 0;
-    height: 80px;
     background: @theme_background;
     width: 100%;
     color: @base_color;
-    font-size: 28px;
-    line-height: 80px;
-    padding: 0 20px;
+    font-size: 14px;
+    line-height: 40px;
+    padding: 0 10px;
     box-sizing: border-box;
 }
 

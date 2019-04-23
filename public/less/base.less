@@ -153,6 +153,9 @@ a {
 [v-cloak] {
   display: none;
 }
+div {
+  box-sizing: border-box;
+}
 .model {
   position: absolute;
   top: 0%;
@@ -172,6 +175,7 @@ a {
 .flex {
   display: flex;
   align-items: center;
+  width: 100%;
 }
 
 .flex-center {
@@ -204,24 +208,24 @@ a {
 }
 
 .goods-name {
-  font-size: 28px;
-  margin-bottom: 20px;
+  font-size: 14px;
+  margin-bottom: 10px;
 }
 
 .goods-num {
-  font-size: 26px;
-  margin-top: 20px;
+  font-size: 13px;
+  margin-top: 10px;
 }
 
 .product-price {
-  margin-top: 10px;
+  margin-top: 5px;
   color: red;
-  font-size: 26px;
+  font-size: 13px;
   // margin: 20px 0;
 }
 .product-price-origin {
   color: #ccc;
-  font-size: 22px;
+  font-size: 12px;
   text-decoration: line-through;
   margin-left: 10px;
   // margin: 20px 0;
@@ -280,35 +284,12 @@ a {
 .page {
   display: flex;
   flex-direction: column;
+  padding-top: 40px;
   height: 100%;
-  //  overflow-y: scroll;
-  //  -webkit-overflow-scrolling: touch;
+  padding-bottom: 44px;
 }
 
 .container {
   flex: 1;
-  padding-top: 80px;
-  padding-bottom: 88px;
-}
-
-.ordercontainer {
-  padding-top: 400px;
-  margin: 0 auto;
-  text-align: center;
-  p {
-    margin-top: 20px;
-    font-size: 28px;
-  }
-}
-
-.orderpage div:nth-child(1) {
-  height: 100%;
-}
-
-.tab-item {
-  height: auto !important;
-}
-.goods_cart {
-  background: url('../img/icon/common_sprites.png') -3px -73px; /* no */
-  background-size: 100%;
+  font-size: 14px;
 }

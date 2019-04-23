@@ -16,12 +16,11 @@ export default {
 <style lang="less" scoped>
 @import "../../public/less/variable.less";
 header {
-    height: 80px;
     text-align: center;
     background: @theme_background;
     color: @base_color;
-    font-size: 26px;
-    line-height: 80px;
+    font-size: 14px;
+    line-height: 40px;
     width: 100%;
     z-index: 10;
     position: fixed;

@@ -1,29 +1,24 @@
 <template>
     <div class="page">
-        <message ref="message"></message> <headers :tabname="$t('m.HeaderCategoty')"></headers>
-        <transition :name="slidename">
-            <div class="container flex" id="container" v-show="mainarea" v-cloak>
-                <div class="leftbar">
-                    <div class="barItem" v-for="(menuItem, menuIndex) in menuList" :key="menuIndex">
-                        <p :class="{ active: menuIndex === $store.state.tabindex }" class="menu-text" @click="onBar(menuIndex, menuItem.title)">{{ menuItem.title }}</p>
-                    </div>
-                </div>
-                <div class="rightContent">
+        <headers :tabname="$t('m.HeaderCategoty')"></headers>
+        <div class="container flex" id="container" v-show="mainarea" v-cloak>
+            <el-tabs tab-position="left" style="height: 100%;" @tab-click="onBar">
+                <el-tab-pane :label="menuItem.title" v-for="(menuItem, menuIndex) in menuList" :key="menuIndex">
                     <div class="rightItem" v-for="(categoryItem, categoryIndex) in categoryList" @click="onDetail(categoryItem)" :key="categoryIndex">
                         <div class="category-item flex">
                             <div class="item flex detail-item">
-                                <div class="goods-img"><img v-lazy="categoryItem.imgCover" /></div>
+                                <img class="goods-img" v-lazy="categoryItem.imgCover" />
                                 <div class="goods-textBox">
                                     <p class="goods-name">{{ categoryItem.title }}</p>
                                     <p class="goods-coach">¥{{ categoryItem.priceNow }}</p>
-                                    <div class="goods-cartBox"><i class="goods_cart" @click.stop="onAddCart(categoryItem)"></i></div>
+                                    <div class="goods-cartBox"><i class="el-icon-goods" @click.stop="onAddCart(categoryItem)"></i></div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </transition>
+                </el-tab-pane>
+            </el-tabs>
+        </div>
         <footers :urlRouter="$route.path" :cartnum="cartLength" ref="footer"></footers>
     </div>
 </template>
@@ -32,6 +27,7 @@
 import { mapGetters } from "vuex";
 import { apiGetProduct } from "../../api/product.js";
 import { apiGetCategoryMenu } from "../../api/category.js";
+import { dataMixin } from "../../mixins/dataMixin.js";
 export default {
     data() {
         return {
@@ -43,6 +39,7 @@ export default {
             type: "糖果·巧克力"
         };
     },
+    mixins: [dataMixin],
     components: {
         Headers: () => import("../../components/Header"),
         Footers: () => import("../../components/Footer"),
@@ -51,9 +48,8 @@ export default {
     computed: {
         ...mapGetters(["carts", "this.$store.state.tabindex"])
     },
+
     mounted() {
-        /*判断动画是进还是出*/
-        this.$store.state.comname == "index" ? (this.slidename = "slide-go") : (this.slidename = "slide-back");
         this.setComname("category");
         this.$store.state.tabindex == undefined && this.setTabindex(0);
         this.getMenuList();
@@ -63,21 +59,17 @@ export default {
         /*获取分类栏目*/
         async getMenuList() {
             let res = await apiGetCategoryMenu();
-            // res.data.result = res.data.result.unshift();
-            this.menuList = res.data.result.slice(1, res.data.result.length);
+            this.menuList = res.data.result;
         },
         /*获取分类列表*/
-        async getCategoryList() {
+        async getCategoryList(tyoe) {
             let res = await apiGetProduct(this.pageNum, this.type);
             this.categoryList = res.data.result;
         },
         /*切换分类*/
-        onBar(index, category) {
-            console.log("category", category);
-            this.setTabindex(index);
-            this.type = category;
+        onBar(tab) {
+            this.type = tab.label;
             this.getCategoryList();
-            //   this.categoryContent = this.categoryList[this.$store.state.tabindex];
         },
         /*添加购物车*/
         onAddCart(item) {
@@ -103,36 +95,33 @@ export default {
 <style lang="less" scoped>
 @import "../../../public/less/variable.less";
 .container {
+    display: flex;
     align-items: flex-start;
 }
 .category {
-    padding-top: 80px;
-    padding-bottom: 88px;
+    //   padding-top: 40px;
+    //   padding-bottom: 44px;
 }
 
 .leftbar {
     position: fixed;
     left: 0;
-    width: 180px;
-    font-size: 28px;
+    //   top: 40px;
+    width: 90px;
+    font-size: 14px;
     text-align: center;
     height: 88%;
     border-right: 1px solid #ccc;
 }
 
 .barItem {
-    height: 80px;
-    line-height: 80px;
+    line-height: 40px;
     border-bottom: 1px solid #ccc;
 }
 
 .rightContent {
     flex: 1;
-    margin-left: 180px;
-}
-
-.rightItem:nth-last-child(1) {
-    padding-bottom: 90px;
+    margin-left: 90px;
 }
 
 .active.menu-text {
@@ -141,8 +130,9 @@ export default {
 }
 
 .category-item {
-    padding: 20px 0;
     border-bottom: 1px solid #ccc;
+    height: 110px;
+    width: 100%;
 }
 
 .detail-item {
@@ -154,34 +144,25 @@ export default {
 }
 
 .goods-img {
-    margin-right: 20px;
-    width: 400px;
-    height: 200px;
-    img {
-        width: 100%;
-        height: 100%;
-    }
+    margin-right: 10px;
+    width: 80px;
+    height: 80px;
 }
 
 .goods-name {
-    font-size: 28px;
+    font-size: 14px;
 }
 
 .goods-coach {
-    font-size: 26px;
+    font-size: 13px;
     color: red;
-    margin: 20px 0;
+    margin: 10px 0;
 }
 
 .goods-cartBox {
-    margin-right: 40px;
-
-    i {
-        display: inline-block;
-        width: 60px;
-        height: 40px;
-        background: url("../../../public/img/icon/common_sprites.png") -3px -73px; /* no */
-        background-size: 100%;
-    }
+    margin-right: 20px;
+}
+.el-tabs {
+    width: 98%;
 }
 </style>

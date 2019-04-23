@@ -57,7 +57,7 @@ footer {
     bottom: 0;
     position: fixed;
     width: 100%;
-    height: 88px;
+    height: 44px;
     background: @base_color;
     box-shadow: 0 -2px 9px rgba(0, 0, 0, 0.1);
 }
@@ -96,8 +96,8 @@ footer {
 }
 
 .footerIcon {
-    width: 60px;
-    height: 60px;
+    width: 30px;
+    height: 30px;
 }
 
 .footerHomeIcon {

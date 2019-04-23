@@ -6,3 +6,9 @@ export function apiLogin(user, pwd) {
         pwd: pwd
     });
 }
+export function apiRegister(user, pwd) {
+    return axios.post(`/user/register`, {
+        user: user,
+        pwd: pwd
+    });
+}

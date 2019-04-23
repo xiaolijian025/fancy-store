@@ -8,6 +8,10 @@ import VueTouch from "vue-touch";
 import VueLazyLoad from "vue-lazyload";
 import Vconsole from "vconsole";
 import fastclick from "fastclick";
+import ElementUI from "element-ui";
+import Vant from "vant";
+import "vant/lib/index.css";
+import "element-ui/lib/theme-chalk/index.css";
 import Raven from "raven-js";
 import RavenVue from "raven-js/plugins/vue";
 import ToastBox from "./components/ToastBox/index"; //全局Toast弹窗
@@ -18,7 +22,8 @@ import { mapGetters, mapMutations } from "vuex";
 let vConsole = null;
 process.env.NODE_ENV == "development" && (vConsole = new Vconsole());
 export default vConsole;
-
+Vue.use(ElementUI);
+Vue.use(Vant);
 // axios全局拦截
 Vue.prototype.$http = axios;
 

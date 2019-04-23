@@ -3,10 +3,12 @@
         <headersec tabname="我的地址"></headersec>
         <transition :name="slidename">
             <div class="container" v-show="mainarea">
-                <div v-show="!havePage"><nopage></nopage></div>
-                <div v-show="havePage">
-                    <div class="address-item" v-for="(addressItem, addressIndex) in this.$store.state.address" @click="onChooseAddress(addressItem)" :key="addressIndex">
-                        <p>{{ addressItem }}</p>
+                <nopage ref="nopage" :title="title"></nopage>
+
+                <div>
+                    <div class="address-item flex" v-for="(addressItem, addressIndex) in addressData" @click="onChooseAddress(addressItem)" :key="addressIndex">
+                        <p>{{ addressItem.address }}</p>
+                        <p>{{ addressItem.phone }}</p>
                     </div>
                 </div>
             </div>
@@ -17,22 +19,24 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
+import { apiGetAddress } from "../../api/address.js";
+import { dataMixin } from "../../mixins/dataMixin.js";
 export default {
     data() {
         return {
-            havePage: false
+            addressData: []
         };
     },
+    mixins: [dataMixin],
     components: {
-        Headersec: () => import("../../components/HeaderSec"),
-        Nopage: () => import("../../components/NoPage")
+        Headersec: () => import("../../components/HeaderSec")
     },
     computed: {
         ...mapGetters(["this.$store.state.address", "this.$store.state.chooseaddress", "this.$store.state.ischoose"])
     },
 
     mounted() {
-        this.$store.state.address.length === 0 ? (this.havePage = false) : (this.havePage = true);
+        this.getAddress();
 
         /*判断动画是进还是出*/
         this.$store.state.comname === "addressadd" ? (this.slidename = "slide-back") : (this.slidename = "slide-go");
@@ -52,6 +56,11 @@ export default {
                 this.setIschoose(2);
             }
         },
+        async getAddress() {
+            let res = await apiGetAddress();
+            this.addressData = res.data.result;
+            this.addressData.length === 0 ? (this.havePage = false) : (this.havePage = true);
+        },
         ...mapMutations({
             setChooseaddress: "SET_CHOOSEADDRESS",
             setIschoose: "SET_ISCHOOSE"
@@ -67,18 +76,17 @@ export default {
     bottom: 0;
     background: @theme_background;
     width: 100%;
-    height: 80px;
-    line-height: 80px;
+    line-height: 40px;
     color: @base_color;
-    font-size: 28px;
+    font-size: 14px;
     text-align: center;
 }
 
 .address-item {
-    height: 120px;
-    line-height: 120px;
-    font-size: 28px;
+    line-height: 60px;
+    font-size: 14px;
     text-align: center;
     border-bottom: 1px solid #ccc;
+    justify-content: space-around;
 }
 </style>

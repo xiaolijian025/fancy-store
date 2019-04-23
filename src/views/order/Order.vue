@@ -1,31 +1,24 @@
 <template>
-    <div class="page orderpage">
-        <v-touch @swipeleft="onSwipeLeft()" @swiperight="onSwipeRight()">
-            <headersec tabname="我的订单" ref="noback"></headersec> <ordertab :urlRouter="$route.path"></ordertab>
-            <transition :name="slidename">
-                <div class="container" v-show="mainarea">
-                    <div v-show="!havePage"><nopage></nopage></div>
-                    <div class="order-item" v-show="havePage" v-cloak>
-                        <div v-for="(itemPay, itemIndex) in orderData" :key="itemIndex">
-                            <div class="order-top flex-space">
-                                <p>订单号xxxxx</p>
-                                <p>已支付</p>
-                            </div>
-                            <div class="order-content">
-                                <div class="flex">
-                                    <div class="order-img"><img :src="itemPay.imgCover" /></div>
-                                    <div class="order-text">
-                                        <p class="goods-name text-ellipsis">{{ itemPay.GoodsName }}</p>
-                                        <p class="goods-num">x{{ itemPay.num }}</p>
-                                        <p class="goods-price">¥{{ itemPay.priceNow }}</p>
-                                    </div>
-                                </div>
+    <div class="page orderpage container">
+        <headersec tabname="我的订单" ref="noback"></headersec>
+        <el-tabs>
+            <el-tab-pane :label="item.name" v-for="(item, index) in orderTab" :key="index" @tab-click="onBar">
+                <div class="order_item" v-for="(itemPay, itemIndex) in orderData" :key="itemIndex">
+                    <div class="order-top flex-space">
+                        <p>订单号:{{ itemPay.id }}</p>
+                        <el-tag>{{ itemPay.status }}</el-tag>
+                    </div>
+                    <div class="order-content flex">
+                        <div class="flex" v-for="(itemProduct, indexProduct) in itemPay.product" :key="indexProduct">
+                            <img class="order-img" :src="itemProduct.imgCover" />
+                            <div class="order-text">
+                                <p class="goods-price">¥{{ itemProduct.priceNow }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
-            </transition>
-        </v-touch>
+            </el-tab-pane>
+        </el-tabs>
     </div>
 </template>
 
@@ -36,31 +29,30 @@ export default {
     data() {
         return {
             havePage: false,
-            orderData: []
+            orderData: [],
+            type: "",
+            orderTab: [{ name: "全部" }, { name: "待付款" }, { name: "待收货" }, { name: "已完成" }]
         };
     },
     components: {
         Headersec: () => import("../../components/HeaderSec"),
-        Nopage: () => import("../../components/NoPage"),
-        Ordertab: () => import("../../components/OrderTab")
+        Nopage: () => import("../../components/NoPage")
     },
     computed: {
         ...mapGetters(["this.$store.state.pays", "this.$store.state.ordercur", "this.$store.state.ordertab"])
     },
     mounted() {
         this.getOrder();
-        this.setOrdercur(1);
-        this.orderData.length > 0 ? (this.havePage = false) : (this.havePage = true);
-        this.$refs.noback.isBack = false;
-        /*判断动画是进还是出*/
-        this.$store.state.ordercur < this.$store.state.ordertab ? (this.slidename = "slide-back") : (this.slidename = "slide-go");
-        this.setOrdertab(1);
     },
     methods: {
         async getOrder() {
-            let res = await apiGetOrder();
+            let res = await apiGetOrder(this.type);
             this.orderData = res.data.result;
             console.error("resorder", res);
+        },
+        onBar(tab) {
+            this.type = tab.label;
+            this.getOrder();
         },
         onSwipeLeft() {
             this.$router.push("./waitpay");
@@ -78,33 +70,20 @@ export default {
 
 <style lang="less" scoped>
 @import "../../../public/less/variable.less";
-.container {
-    padding-top: 160px;
-}
 
-.order-item {
-    padding-bottom: 20px;
+.order_item {
     border-bottom: 1px solid #ccc;
-    margin-bottom: 20px;
+    height: 120px;
+    padding-top: 10px;
 }
 
 .order-top {
-    height: 80px;
-    font-size: 28px;
-    line-height: 80px;
-    padding: 0 20px;
-    border-bottom: 1px solid #ccc;
-}
-
-.order-content {
-    padding-top: 20px;
+    font-size: 14px;
+    line-height: 20px;
+    padding: 0 10px;
 }
 .order-img {
-    width: 120px;
-    height: 120px;
-    img {
-        width: 100%;
-        height: 100%;
-    }
+    width: 60px;
+    height: 60px;
 }
 </style>

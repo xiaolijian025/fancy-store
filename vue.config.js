@@ -20,11 +20,11 @@ module.exports = {
             },
             postcss: {
                 // options here will be passed to postcss-loader
-                plugins: [
-                    require("postcss-px2rem")({
-                        remUnit: 32
-                    })
-                ]
+                // plugins: [
+                //     require("postcss-px2rem")({
+                //         remUnit: 32
+                //     })
+                // ]
             }
         }
     },

@@ -1,7 +1,7 @@
 <template>
     <div class="page orderpage">
         <v-touch @swipeleft="onSwipeLeft()" @swiperight="onSwipeRight()">
-            <headersec tabname="我的订单" ref="noback"></headersec> <ordertab :urlRouter="$route.path"></ordertab>
+            <headersec tabname="我的订单" ref="noback"></headersec>
             <transition :name="slidename">
                 <div class="ordercontainer" v-show="mainarea">
                     <img src="../../../public/img/github.png" alt />
@@ -19,8 +19,7 @@ export default {
         return {};
     },
     components: {
-        Headersec: () => import("../../components/HeaderSec"),
-        Ordertab: () => import("../../components/OrderTab")
+        Headersec: () => import("../../components/HeaderSec")
     },
     computed: {
         ...mapGetters(["this.$store.state.ordercur"])

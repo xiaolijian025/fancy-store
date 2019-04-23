@@ -1,47 +1,35 @@
 <template>
     <div class="page">
         <headers :tabname="$t('m.HeaderCart')"></headers>
-        <transition :name="slidename">
-            <div class="container" v-show="mainarea">
-                <div v-show="!havePage"><nopage></nopage></div>
-                <div v-show="havePage">
-                    <div class="cart-item" :class="{ selected: itemIndex === cartIndex }" v-for="(cartItem, cartIndex) in cartsData" :key="cartIndex" @click="onDetail(cartItem)">
-                        <v-touch @swipeleft="onSwipeLeft(cartIndex)" @swiperight="onSwipeRight(cartIndex)">
-                            <div class="cart-content flex">
-                                <div class="goods-radio" @click.stop="onGoodsRadio(cartItem)">
-                                    <i class="cart_radio" v-show="!cartItem.goodsRadio"></i> <i class="cart_radio_select" v-show="cartItem.goodsRadio"></i>
-                                </div>
-                                <div class="flex">
-                                    <div class="goods-img"><img v-lazy="cartItem.imgCover" /></div>
-                                    <div class="goods-textBox">
-                                        <p class="goods-name">{{ cartItem.title }}</p>
-                                        <div class="goodsOp flex">
-                                            <i class="shop_cut" @click.stop="onCutCart(cartItem)"></i> <input type="text" :value="cartItem.num" />
-                                            <i class="shop_add" @click.stop="onAddCart(cartItem)"></i>
-                                        </div>
-                                        <p class="goods-coach">¥{{ cartItem.priceNow }}</p>
-                                    </div>
-                                </div>
+        <div class="container">
+            <nopage ref="nopage" :title="title"></nopage>
+            <div>
+                <div class="cart-item flex-space" :class="{ selected: itemIndex === cartIndex }" v-for="(cartItem, cartIndex) in cartsData" :key="cartIndex">
+                    <el-checkbox class="goods_check" v-model="cartItem.goodsRadio" @click.native="onGoodsRadio(cartItem)"></el-checkbox>
+                    <div class="flex" @click="onDetail(cartItem)">
+                        <img class="goods-img" v-lazy="cartItem.imgCover" />
+                        <div class="goods-textBox">
+                            <p class="goods-name">{{ cartItem.title }}</p>
+                            <div class="goodsOp">
+                                <i class="el-icon-remove-outline" @click.stop="onCutCart(cartItem)"></i> <input type="text" :value="cartItem.num" />
+                                <i class="s el-icon-circle-plus-outline" @click.stop="onAddCart(cartItem)"></i>
                             </div>
-                            <!--v-show="itemIndex === cartIndex"-->
-                            <div class="remove" @click.stop="onRemove(cartItem, cartIndex)"><i></i></div>
-                        </v-touch>
+                            <p class="goods-coach">¥{{ cartItem.priceNow }}</p>
+                        </div>
                     </div>
+                    <i class="remove el-icon-delete" @click.stop="onRemove(cartItem, cartIndex)"></i>
                 </div>
             </div>
-        </transition>
+        </div>
 
         <div class="cartBottom-detail flex-space" v-show="$store.state.carts" v-cloak>
-            <div class="flex">
-                <div class="shopRadio" @click="onSelectAll()"><i class="cart_radio" v-show="!goodsRadioAll"></i> <i class="cart_radio_select" v-show="goodsRadioAll"></i></div>
-                <div class="bottom-left">
-                    <p>
-                        合计: <span class="shopCoach">¥{{ allCoach }}</span>
-                    </p>
-                </div>
+            <div>
+                <el-checkbox v-model="goodsRadioAll" @click.native="onSelectAll()">
+                    合计: <span class="shopCoach">¥{{ allCoach }}</span>
+                </el-checkbox>
             </div>
 
-            <div class="subminCart" @click="onOrder"><p>提交订单</p></div>
+            <div class="subminCart" @click="onOrder">提交订单</div>
         </div>
         <footers :urlRouter="$route.path"></footers>
     </div>
@@ -50,45 +38,46 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import { apiGetCart, apiDeleteCart, apiUpdateCart } from "../../api/cart.js";
+import { dataMixin } from "../../mixins/dataMixin.js";
 export default {
     data() {
         return {
             goodsRadioAll: false,
             allCoach: 0,
             radioArr: [],
-            havePage: false,
             itemIndex: "",
             cartsData: []
         };
     },
+    mixins: [dataMixin],
     components: {
         Headers: () => import("../../components/Header"),
-        Footers: () => import("../../components/Footer"),
-        Nopage: () => import("../../components/NoPage")
+        Footers: () => import("../../components/Footer")
     },
     computed: {
         ...mapGetters(["this.$store.state.carts"])
     },
     mounted() {
-        /*判断动画是进还是出*/
-        const slideArr = ["index", "category", "goodsdetail"];
-        slideArr.includes(this.$store.state.comname) ? (this.slidename = "slide-go") : (this.slidename = "slide-back");
-        this.setComname("cart");
-
         this.getCart();
     },
     methods: {
         async getCart() {
             let res = await apiGetCart();
-            console.log("res", res);
+            console.log("res.data.code: ", res.data.code);
+            if (res.data.code == -1) {
+                this.title = "用户未登陆,请千万登陆~";
+                setTimeout(() => {
+                    this.$refs.nopage.onDisplay();
+                    this.$refs.nopage.onLogin();
+                }, 300);
+                return;
+            }
             this.cartsData = res.data.result;
-
-            console.error("this.cartsData", this.cartsData);
             if (this.cartsData.length == 0) {
-                this.havePage = false;
+                this.title = "购物车暂无数据,请前往添加~";
+                this.$refs.nopage.onDisplay();
             } else {
-                this.havePage = true;
-                this.cartsData.forEach(item => {
+                this.cartsData.map(item => {
                     typeof item.goodsRadio == "undefined" && this.$set(item, "goodsRadio", false);
                 });
             }
@@ -142,11 +131,7 @@ export default {
         /*删除商品*/
         async onRemove(item, index) {
             let res = await apiDeleteCart(item._id);
-            console.log("res", res);
             this.cartsData.splice(index, 1);
-            //   let index = this.$store.state.carts.indexOf(item);
-            //   this.$store.state.carts.splice(index, 1);
-            //   this.itemIndex = "";
         },
         /*提交订单*/
         onOrder() {
@@ -182,125 +167,45 @@ export default {
 
 <style lang="less" scoped>
 @import "../../../public/less/variable.less";
-.container {
-    padding-bottom: 160px;
-    overflow-x: hidden;
-}
 
 .cart-item {
     border-bottom: 1px solid #cccccc;
-    padding-top: 20px;
-    height: 240px;
-    -webkit-transition: all 0.3s linear;
-    -webkit-user-select: none;
-    position: relative;
+    height: 120px;
+    padding: 0 20px;
 }
 
-.remove {
-    background: linear-gradient(90deg, #9bbeff 0%, #6495ed 100%);
-    width: 18%;
-    height: 260px;
-    line-height: 260px;
-    text-align: center;
-    text-decoration: none;
-    position: absolute;
-    right: -18%;
-    top: 0;
-    i {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        margin: auto;
-        left: 20%;
-        width: 40px;
-        height: 48px;
-        background: url("../../../public/img/icon/common_sprites.png") -10px -438px;
-    }
-}
-
-.cart-content {
-    width: 100%;
-}
-
-.selected {
-    -webkit-transform: translate(-12%, 0);
-    -webkit-transition: all 0.3s linear;
-}
-
-.goods-radio {
-    margin: 0 10px;
-
-    i {
-        width: 68px;
-        height: 58px;
-        display: inline-block;
-        background-size: 100%;
-    }
-}
-.cart_radio,
-.cartBottom-detail {
-    background: url("../../../public/img/icon/common_sprites.png") 0px -47px; /* no */
-}
-.cart_radio_select {
-    background: url("../../../public/img/icon/common_sprites.png") 0px 6px; /* no */
-}
 .goods-img {
-    margin-right: 20px;
-    width: 200px;
-    height: 200px;
-    img {
-        width: 100%;
-        height: 100%;
-    }
-}
-
-.goods-name {
-    font-size: 28px;
+    margin-right: 10px;
+    width: 100px;
+    height: 100px;
 }
 
 .goods-coach {
-    font-size: 30px;
     color: red;
     align-self: flex-end;
 }
 
 .goodsOp {
-    margin: 40px 0;
-    i {
-        width: 66px;
-        height: 55px;
-    }
+    margin: 20px 0;
     input {
         border: none;
-        font-size: 36px;
+        font-size: 14px;
         text-align: center;
-        width: 60px;
-    }
-    .shop_cut {
-        background: url("../../../public/img/icon/common_sprites.png") 0px -554px;
-        background-size: 100%;
-    }
-    .shop_add {
-        background: url("../../../public/img/icon/common_sprites.png") 0px -620px;
-        background-size: 100%;
+        width: 30px;
     }
 }
 
 .cartBottom-detail {
-    height: 80px;
-    font-size: 28px;
+    height: 40px;
+    font-size: 14px;
     width: 100%;
     position: absolute;
-    bottom: 80px;
-    color: @base_color;
-    background: @theme_background;
-    /*background:red;*/
-    i {
-        width: 68px;
-        height: 68px;
-        display: inline-block;
-        background-size: 100%;
-    }
+    bottom: 40px;
+    padding-left: 10px;
+    box-sizing: border-box;
+    color: @theme_color;
+    background: white;
+    border-top: 1px solid #ccc;
 }
 
 .subminCart {
