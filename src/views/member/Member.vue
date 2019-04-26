@@ -1,27 +1,25 @@
 <template>
     <div class="page">
-        <headers :tabname="$t('m.HeaderMember')"></headers>
-        <transition :name="slidename">
-            <div class="container" v-show="mainarea">
-                <div class="floor floor_one" @click="toLogin">
-                    <img src="../../../public/img/github.png" alt />
-                    <p>Open Free Share</p>
-                </div>
-                <div class="floor floor_item floor_two flex-space" @click="onInfo">
-                    <p>{{ $t("m.member.info") }}</p>
-                    <i class="el-icon-arrow-right"></i>
-                </div>
-                <div class="floor floor_item floor_two flex-space" @click="onOrder">
-                    <p>{{ $t("m.member.order") }}</p>
-                    <i class="el-icon-arrow-right"></i>
-                </div>
-                <div class="floor floor_item floor_two flex-space" @click="onAddress">
-                    <p>{{ $t("m.member.address") }}</p>
-                    <i class="el-icon-arrow-right"></i>
-                </div>
+        <van-nav-bar :title="$t('m.HeaderMember')" />
+
+        <div class="container">
+            <div class="floor floor_one" @click="toLogin">
+                <img src="../../../public/img/github.png" alt />
+                <p>Open Free Share</p>
             </div>
-        </transition>
-        <footers :urlRouter="$route.path"></footers>
+            <div class="floor floor_item floor_two flex-space" @click="onInfo">
+                <p>{{ $t("m.member.info") }}</p>
+                <i class="el-icon-arrow-right"></i>
+            </div>
+            <div class="floor floor_item floor_two flex-space" @click="onOrder">
+                <p>{{ $t("m.member.order") }}</p>
+                <i class="el-icon-arrow-right"></i>
+            </div>
+            <div class="floor floor_item floor_two flex-space" @click="onAddress">
+                <p>{{ $t("m.member.address") }}</p>
+                <i class="el-icon-arrow-right"></i>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -30,10 +28,7 @@ export default {
     data() {
         return {};
     },
-    components: {
-        Headers: () => import("../../components/Header"),
-        Footers: () => import("../../components/Footer")
-    },
+    components: {},
     mounted() {},
     methods: {
         /*个人信息*/

@@ -11,11 +11,10 @@ import fastclick from "fastclick";
 import ElementUI from "element-ui";
 import Vant from "vant";
 import "vant/lib/index.css";
+
 import "element-ui/lib/theme-chalk/index.css";
 import Raven from "raven-js";
 import RavenVue from "raven-js/plugins/vue";
-import ToastBox from "./components/ToastBox/index"; //全局Toast弹窗
-Vue.use(ToastBox);
 import { mapGetters, mapMutations } from "vuex";
 // import "../public/js/rem.js";
 // 控制台插件
@@ -75,6 +74,9 @@ Vue.mixin({
         ...mapGetters(["this.$store.state.comname"])
     },
     methods: {
+        onBack() {
+            this.$router.push("./member");
+        },
         ...mapMutations({
             setGoods: "SET_GOODS",
             setCarts: "SET_CARTS",

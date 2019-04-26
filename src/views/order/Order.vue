@@ -1,6 +1,7 @@
 <template>
     <div class="page orderpage container">
-        <headersec tabname="我的订单" ref="noback"></headersec>
+        <van-nav-bar title="我的订单" left-text="返回" left-arrow @click-left="onBack" />
+
         <van-tabs v-model="active" swipeable @click="onBar">
             <van-tab :title="item.name" v-for="(item, index) in orderTab" :key="index">
                 <div class="order_item" v-for="(itemPay, itemIndex) in orderData" :key="itemIndex">
@@ -53,7 +54,6 @@ export default {
         };
     },
     components: {
-        Headersec: () => import("../../components/HeaderSec"),
         Nopage: () => import("../../components/NoPage")
     },
     computed: {

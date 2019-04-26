@@ -1,12 +1,11 @@
 <template>
     <div class="page">
-        <headersec tabname="个人信息"></headersec>
-        <transition name="slide-go">
-            <div class="container" v-show="mainarea">
-                <img src="../../../public/img/github.png" alt />
-                <p>wechat:374139613</p>
-            </div>
-        </transition>
+        <van-nav-bar title="个人信息" left-text="返回" left-arrow @click-left="onBack" />
+
+        <div class="container" v-show="mainarea">
+            <img src="../../../public/img/github.png" alt />
+            <p>wechat:374139613</p>
+        </div>
     </div>
 </template>
 
@@ -15,9 +14,7 @@ export default {
     data() {
         return {};
     },
-    components: {
-        Headersec: () => import("../../components/HeaderSec")
-    },
+    components: {},
     mounted() {}
 };
 </script>

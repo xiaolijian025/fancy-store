@@ -1,13 +1,14 @@
 <template>
     <div class="page">
-        <headersec tabname="注册"></headersec>
+        <van-nav-bar title="注册" left-text="返回" left-arrow @click-left="onBack" />
         <div class="register">
-            <el-form label-position="left" label-width="80px">
-                <el-form-item label="用户名:"> <el-input size="mini" placeholder="输入账号" clearable v-model="userAccount"></el-input> </el-form-item>
-                <el-form-item label="密码:"> <el-input size="mini" placeholder="输入密码" type="password" clearable v-model="userPasswd"></el-input> </el-form-item>
-                <el-form-item label="确认密码:"> <el-input size="mini" placeholder="输入确认密码" type="password" clearable v-model="userPasswdConfim"></el-input> </el-form-item>
-            </el-form>
-            <el-button class="login_btn" type="primary" @click="onRegister" size="mini">注册</el-button>
+            <van-cell-group>
+                <van-field v-model="userAccount" required clearable left-icon="contact" label="用户名" placeholder="请输入用户名" />
+
+                <van-field v-model="userPasswd" left-icon="closed-eye" type="password" label="密码" placeholder="请输入密码" required />
+                <van-field v-model="userPasswdConfim" left-icon="closed-eye" type="password" label="确认密码" placeholder="输入确认密码" required />
+            </van-cell-group>
+            <van-button class="login_btn" size="small" round type="info" @click="onRegister">注册</van-button>
         </div>
         <div class="login" @click="toLogin">已有账号？前往登录...</div>
     </div>
@@ -23,9 +24,7 @@ export default {
             userPasswdConfim: "abc"
         };
     },
-    components: {
-        Headersec: () => import("../../components/HeaderSec")
-    },
+    components: {},
     mounted() {
         console.log(`1`);
     },

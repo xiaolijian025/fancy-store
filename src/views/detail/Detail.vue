@@ -1,9 +1,12 @@
 <template>
     <div class="page">
-        <headersec :tabname="$t('m.HeaderDetail')"></headersec>
+        <van-nav-bar :title="$t('m.HeaderDetail')" left-text="返回" left-arrow @click-left="onBack" />
+
         <transition :name="slidename">
             <div class="container" v-show="mainarea">
-                <div v-show="!havePage"><nopage></nopage></div>
+                <div v-show="!havePage">
+                    <nopage></nopage>
+                </div>
                 <div v-show="havePage">
                     <img :src="$store.state.goods.GoodsImage" class="goodsImg" />
                     <div class="detail-content">
@@ -21,15 +24,21 @@
                 </transition>
             </div>
 
-            <div class="addCart" @click="onCartModel()"><span class="tabbar-label">加入购物车</span></div>
-            <div class="external addPay" @click="onBuyModel()"><span class="tabbar-label">立即购买</span></div>
+            <div class="addCart" @click="onCartModel()">
+                <span class="tabbar-label">加入购物车</span>
+            </div>
+            <div class="external addPay" @click="onBuyModel()">
+                <span class="tabbar-label">立即购买</span>
+            </div>
         </div>
 
         <transition name="slide-up">
             <div class="model" v-show="addCartModel" v-cloak>
                 <div class="model-content addCart-content" @click.stop="addCartModel = true">
                     <div class="cartModel-box flex">
-                        <div class="cartModel-img"><img :src="$store.state.goods.GoodsImage" /></div>
+                        <div class="cartModel-img">
+                            <img :src="$store.state.goods.GoodsImage" />
+                        </div>
                         <div class="cartModel-text">
                             <div class="flex-between">
                                 <p class="goods-name">{{ $store.state.goods.GoodsName }}</p>
@@ -41,7 +50,11 @@
                     </div>
                     <div class="cartModel-bottom flex-between">
                         <p>购买数量</p>
-                        <div class="goodsOp flex"><i class="shop_cut" @click="onCutCart()"></i> <input type="text" :value="goodsNum" readonly /> <i class="shop_add" @click="onAddCart()"></i></div>
+                        <div class="goodsOp flex">
+                            <i class="shop_cut" @click="onCutCart()"></i>
+                            <input type="text" :value="goodsNum" readonly />
+                            <i class="shop_add" @click="onAddCart()"></i>
+                        </div>
                     </div>
                     <div @click.stop="onBuy">
                         <p class="cartModel-addCart" v-show="!isBuy">加入购物车</p>
@@ -80,7 +93,6 @@ export default {
         this.setComname("goodsdetail");
     },
     components: {
-        Headersec: () => import("../../components/HeaderSec"),
         Nopage: () => import("../../components/NoPage")
     },
     methods: {

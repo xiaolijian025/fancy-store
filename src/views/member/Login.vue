@@ -1,18 +1,21 @@
 <template>
     <div class="page">
-        <headersec tabname="登录"></headersec>
+        <van-nav-bar title="登录" left-text="返回" left-arrow @click-left="onBack" />
+
         <div class="login">
-            <el-form label-position="left" label-width="80px">
-                <el-form-item label="用户名:"> <el-input size="mini" placeholder="输入账号" clearable v-model="userAccount"></el-input> </el-form-item>
-                <el-form-item label="密码:"> <el-input size="mini" placeholder="输入账号" type="password" clearable v-model="userPasswd"></el-input> </el-form-item>
-            </el-form>
-            <el-button class="login_btn" type="primary" @click="onLogin" size="mini">登录</el-button>
+            <van-cell-group>
+                <van-field v-model="userAccount" required clearable left-icon="contact" label="用户名" placeholder="请输入用户名" />
+
+                <van-field v-model="userPasswd" left-icon="closed-eye" type="password" label="密码" placeholder="请输入密码" required />
+            </van-cell-group>
+            <van-button class="login_btn" size="small" round type="info" @click="onLogin">登录</van-button>
         </div>
         <div class="register" @click="toRegister">还没有账号？进行注册...</div>
     </div>
 </template>
 
 <script>
+import { Toast } from "vant";
 import { apiLogin } from "../../api/user.js";
 export default {
     data() {
@@ -21,9 +24,7 @@ export default {
             userPasswd: "abc"
         };
     },
-    components: {
-        Headersec: () => import("../../components/HeaderSec")
-    },
+    components: {},
     mounted() {
         console.log(`1`);
     },
@@ -35,8 +36,9 @@ export default {
                     path: "/"
                 });
             } else {
-                this.$toastBox.showToastBox({
-                    toast: res.data.msg
+                Toast({
+                    message: res.data.msg,
+                    position: "bottom"
                 });
             }
             console.log("res", res);
@@ -51,10 +53,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.page {
+    background: #f2f3f5;
+}
 .login {
     text-align: center;
-    margin: 0 auto;
     margin-top: 94px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 .login_btn {
     margin: 20px;

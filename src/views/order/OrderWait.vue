@@ -1,9 +1,12 @@
 <template>
     <div class="page">
-        <headersec tabname="订单详情"></headersec>
+        <van-nav-bar title="订单详情" left-text="返回" left-arrow @click-left="onBack" />
+
         <transition :name="slidename">
             <div class="container" v-show="mainarea">
-                <div v-show="!havePage"><nopage></nopage></div>
+                <div v-show="!havePage">
+                    <nopage></nopage>
+                </div>
                 <div v-show="havePage">
                     <div class="chooseAddress" @click="onAddress()">
                         <div class="flex chooseBox">
@@ -26,7 +29,8 @@
                         </div>
                     </div>
                     <div class="orderBottom flex-space">
-                        <span>总金额:{{ allCoach }}</span> <span @click="onOrder">结算</span>
+                        <span>总金额:{{ allCoach }}</span>
+                        <span @click="onOrder">结算</span>
                     </div>
                 </div>
             </div>
@@ -47,7 +51,6 @@ export default {
         };
     },
     components: {
-        Headersec: () => import("../../components/HeaderSec"),
         Nopage: () => import("../../components/NoPage")
     },
     computed: {
@@ -88,10 +91,6 @@ export default {
             console.log("this.prodectId: ", this.prodectId);
             let res = await apiAddOrder(this.prodectId, this.$store.state.chooseaddress, this.allCoach, status);
             if ((status = "已付款")) {
-                this.$message({
-                    type: "success",
-                    message: "下单成功"
-                });
                 setTimeout(() => {
                     this.$router.push({
                         path: "/order"

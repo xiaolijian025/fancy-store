@@ -8,24 +8,28 @@ export default new Router({
     routes: [
         {
             path: "/",
-            component: () => import("./views/Home.vue")
+            component: () => import("./views/Home/index.vue"),
+            redirect: "/product",
+            children: [
+                {
+                    path: "product",
+                    component: () => import("./views/Home.vue")
+                },
+                {
+                    path: "category",
+                    component: () => import("./views/category/Category.vue")
+                },
+                {
+                    path: "cart",
+                    component: () => import("./views/cart/Cart.vue")
+                },
+                {
+                    path: "/member",
+                    component: () => import("./views/member/Member.vue")
+                }
+            ]
         },
-        {
-            path: "/index",
-            component: () => import("./views/Home.vue")
-        },
-        {
-            path: "/category",
-            component: () => import("./views/category/Category.vue")
-        },
-        {
-            path: "/cart",
-            component: () => import("./views/cart/Cart.vue")
-        },
-        {
-            path: "/member",
-            component: () => import("./views/member/Member.vue")
-        },
+
         {
             path: "/register",
             component: () => import("./views/member/Register.vue")

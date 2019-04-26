@@ -1,14 +1,11 @@
 <template>
     <div class="page orderpage">
-        <v-touch @swipeleft="onSwipeLeft()" @swiperight="onSwipeRight()">
-            <headersec tabname="我的订单" ref="noback"></headersec>
-            <transition :name="slidename">
-                <div class="ordercontainer" v-show="mainarea">
-                    <img src="../../../public/img/github.png" alt />
-                    <p>待付款页面</p>
-                </div>
-            </transition>
-        </v-touch>
+        <van-nav-bar title="我的订单" left-text="返回" left-arrow @click-left="onBack" />
+
+        <div class="ordercontainer" v-show="mainarea">
+            <img src="../../../public/img/github.png" alt />
+            <p>待付款页面</p>
+        </div>
     </div>
 </template>
 
@@ -18,9 +15,7 @@ export default {
     data() {
         return {};
     },
-    components: {
-        Headersec: () => import("../../components/HeaderSec")
-    },
+    components: {},
     computed: {
         ...mapGetters(["this.$store.state.ordercur", "this.$store.state.ordertab"])
     },

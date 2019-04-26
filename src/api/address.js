@@ -1,9 +1,12 @@
 import axios from "../utils/axios";
 
-export function apiAddAddress(address, phone) {
+export function apiAddAddress(name, phone, post, address, detailAddress) {
     return axios.post(`address/add`, {
+        name: name,
+        phone: phone,
+        post: post,
         address: address,
-        phone: phone
+        detailAddress: detailAddress
     });
 }
 export function apiGetAddress() {

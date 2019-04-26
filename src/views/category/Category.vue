@@ -1,7 +1,7 @@
 <template>
     <div class="page">
-        <headers :tabname="$t('m.HeaderCategoty')"></headers>
-        <div class="container flex" id="container" v-show="mainarea" v-cloak>
+        <van-nav-bar :title="$t('m.HeaderCategoty')" background="#6495ed" />
+        <div class="container flex" id="container">
             <van-tabs v-model="active" swipeable @click="onBar">
                 <van-tab :title="menuItem.title" v-for="(menuItem, menuIndex) in menuList" :key="menuIndex">
                     <div class="rightItem" v-for="(categoryItem, categoryIndex) in categoryList" @click="onDetail(categoryItem)" :key="categoryIndex">
@@ -11,31 +11,16 @@
                                 <div class="goods-textBox">
                                     <p class="goods-name">{{ categoryItem.title }}</p>
                                     <p class="goods-coach">¥{{ categoryItem.priceNow }}</p>
-                                    <div class="goods-cartBox"><i class="el-icon-goods" @click.stop="onAddCart(categoryItem)"></i></div>
+                                    <div class="goods-cartBox">
+                                        <i class="el-icon-goods" @click.stop="onAddCart(categoryItem)"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </van-tab>
             </van-tabs>
-            <!-- <el-tabs tab-position="left" style="height: 100%;" @tab-click="onBar">
-                <el-tab-pane :label="menuItem.title" v-for="(menuItem, menuIndex) in menuList" :key="menuIndex">
-                    <div class="rightItem" v-for="(categoryItem, categoryIndex) in categoryList" @click="onDetail(categoryItem)" :key="categoryIndex">
-                        <div class="category-item flex">
-                            <div class="item flex detail-item">
-                                <img class="goods-img" v-lazy="categoryItem.imgCover" />
-                                <div class="goods-textBox">
-                                    <p class="goods-name">{{ categoryItem.title }}</p>
-                                    <p class="goods-coach">¥{{ categoryItem.priceNow }}</p>
-                                    <div class="goods-cartBox"><i class="el-icon-goods" @click.stop="onAddCart(categoryItem)"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </el-tab-pane>
-      </el-tabs>-->
         </div>
-        <footers :urlRouter="$route.path" :cartnum="cartLength" ref="footer"></footers>
     </div>
 </template>
 
@@ -57,11 +42,7 @@ export default {
         };
     },
     mixins: [dataMixin],
-    components: {
-        Headers: () => import("../../components/Header"),
-        Footers: () => import("../../components/Footer"),
-        Message: () => import("../../components/Message")
-    },
+    components: {},
     computed: {
         ...mapGetters(["carts", "this.$store.state.tabindex"])
     },

@@ -1,11 +1,14 @@
 <template>
     <div class="page">
-        <headers :tabname="$t('m.HeaderIndex')"></headers>
+        <van-nav-bar :title="$t('m.HeaderIndex')" />
+
         <div class="langBox" @click="changeLang">{{ $t("m.local") }}</div>
         <div class="container">
             <div class="swiper-container">
                 <div class="swiper-wrapper">
-                    <div class="swiper-slide" v-for="(bannerItem, bannerIndex) in bannerList" :key="bannerIndex"><img :src="bannerItem.img" /></div>
+                    <div class="swiper-slide" v-for="(bannerItem, bannerIndex) in bannerList" :key="bannerIndex">
+                        <img :src="bannerItem.img" />
+                    </div>
                 </div>
                 <div class="swiper-pagination"></div>
             </div>
@@ -21,12 +24,13 @@
                                 <div class="product-price-origin">{{ productItem.priceOrigin }}</div>
                             </div>
                         </div>
-                        <div class="goods-cartBox"><i class="el-icon-goods" @click.stop="onAddCart(productItem)"></i></div>
+                        <div class="goods-cartBox">
+                            <van-icon name="cart-o" @click.stop="onAddCart(productItem)" />
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <footers :urlRouter="$route.path" :cartnum="cartLength" ref="footer"></footers>
     </div>
 </template>
 
@@ -45,10 +49,7 @@ export default {
             slidename: "slide-back"
         };
     },
-    components: {
-        Headers: () => import("../components/Header"),
-        Footers: () => import("../components/Footer")
-    },
+    components: {},
     mounted() {
         new Swiper(".swiper-container", {
             pagination: {

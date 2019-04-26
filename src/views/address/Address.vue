@@ -1,6 +1,7 @@
 <template>
     <div class="page">
-        <headersec tabname="我的地址"></headersec>
+        <van-nav-bar title="我的地址" left-text="返回" left-arrow @click-left="onBack" />
+
         <transition :name="slidename">
             <div class="container" v-show="mainarea">
                 <nopage ref="nopage" :title="title"></nopage>
@@ -13,7 +14,9 @@
                 </div>
             </div>
         </transition>
-        <div class="pageBottom" @click="onAddAddress"><span class="tabbar-label">新增地址</span></div>
+        <div class="pageBottom" @click="onAddAddress">
+            <span class="tabbar-label">新增地址</span>
+        </div>
     </div>
 </template>
 
@@ -28,9 +31,7 @@ export default {
         };
     },
     mixins: [dataMixin],
-    components: {
-        Headersec: () => import("../../components/HeaderSec")
-    },
+    components: {},
     computed: {
         ...mapGetters(["this.$store.state.address", "this.$store.state.chooseaddress", "this.$store.state.ischoose"])
     },

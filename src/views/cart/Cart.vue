@@ -1,17 +1,18 @@
 <template>
     <div class="page">
-        <headers :tabname="$t('m.HeaderCart')"></headers>
+        <van-nav-bar :title="$t('m.HeaderCart')" />
         <div class="container">
             <nopage ref="nopage" :title="title"></nopage>
             <div>
                 <div class="cart-item flex-space" :class="{ selected: itemIndex === cartIndex }" v-for="(cartItem, cartIndex) in cartsData" :key="cartIndex">
-                    <el-checkbox class="goods_check" v-model="cartItem.goodsRadio" @click.native="onGoodsRadio(cartItem)"></el-checkbox>
+                    <van-checkbox class="goods_check" v-model="cartItem.goodsRadio" @click.native="onGoodsRadio(cartItem)"></van-checkbox>
                     <div class="flex" @click="onDetail(cartItem)">
                         <img class="goods-img" v-lazy="cartItem.imgCover" />
                         <div class="goods-textBox">
                             <p class="goods-name">{{ cartItem.title }}</p>
                             <div class="goodsOp">
-                                <i class="el-icon-remove-outline" @click.stop="onCutCart(cartItem)"></i> <input type="text" :value="cartItem.num" />
+                                <i class="el-icon-remove-outline" @click.stop="onCutCart(cartItem)"></i>
+                                <input type="text" :value="cartItem.num" />
                                 <i class="s el-icon-circle-plus-outline" @click.stop="onAddCart(cartItem)"></i>
                             </div>
                             <p class="goods-coach">¥{{ cartItem.priceNow }}</p>
@@ -23,15 +24,22 @@
         </div>
 
         <div class="cartBottom-detail flex-space" v-show="$store.state.carts" v-cloak>
+            <!-- <van-submit-bar :price="allCoach" button-text="提交订单" @submit="onOrder">
+        <van-checkbox v-model="goodsRadioAll" @click.native="onSelectAll()">全选</van-checkbox>
+      </van-submit-bar>-->
             <div>
-                <el-checkbox v-model="goodsRadioAll" @click.native="onSelectAll()">
-                    合计: <span class="shopCoach">¥{{ allCoach }}</span>
-                </el-checkbox>
+                <van-checkbox class="goods_check" v-model="goodsRadioAll" @click.native="onSelectAll()">
+                    合计:
+                    <span class="shopCoach">¥{{ allCoach }}</span>
+                </van-checkbox>
+                <!-- <el-checkbox v-model="goodsRadioAll" @click.native="onSelectAll()">
+          
+        </el-checkbox>-->
             </div>
 
             <div class="subminCart" @click="onOrder">提交订单</div>
+            -->
         </div>
-        <footers :urlRouter="$route.path"></footers>
     </div>
 </template>
 
@@ -50,10 +58,7 @@ export default {
         };
     },
     mixins: [dataMixin],
-    components: {
-        Headers: () => import("../../components/Header"),
-        Footers: () => import("../../components/Footer")
-    },
+    components: {},
     computed: {
         ...mapGetters(["this.$store.state.carts"])
     },
@@ -73,6 +78,7 @@ export default {
                 return;
             }
             this.cartsData = res.data.result;
+            console.log("this.cartsData: ", this.cartsData);
             if (this.cartsData.length == 0) {
                 this.title = "购物车暂无数据,请前往添加~";
                 this.$refs.nopage.onDisplay();
