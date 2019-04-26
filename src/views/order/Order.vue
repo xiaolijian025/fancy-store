@@ -1,7 +1,25 @@
 <template>
     <div class="page orderpage container">
         <headersec tabname="我的订单" ref="noback"></headersec>
-        <el-tabs>
+        <van-tabs v-model="active" swipeable @click="onBar">
+            <van-tab :title="item.name" v-for="(item, index) in orderTab" :key="index">
+                <div class="order_item" v-for="(itemPay, itemIndex) in orderData" :key="itemIndex">
+                    <div class="order-top flex-space">
+                        <p>订单号:{{ itemPay.id }}</p>
+                        <el-tag>{{ itemPay.status }}</el-tag>
+                    </div>
+                    <div class="order-content flex">
+                        <div class="flex" v-for="(itemProduct, indexProduct) in itemPay.product" :key="indexProduct">
+                            <img class="order-img" :src="itemProduct.imgCover" />
+                            <div class="order-text">
+                                <p class="goods-price">¥{{ itemProduct.priceNow }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </van-tab>
+        </van-tabs>
+        <!-- <el-tabs>
             <el-tab-pane :label="item.name" v-for="(item, index) in orderTab" :key="index" @tab-click="onBar">
                 <div class="order_item" v-for="(itemPay, itemIndex) in orderData" :key="itemIndex">
                     <div class="order-top flex-space">
@@ -18,7 +36,7 @@
                     </div>
                 </div>
             </el-tab-pane>
-        </el-tabs>
+    </el-tabs>-->
     </div>
 </template>
 
@@ -50,8 +68,8 @@ export default {
             this.orderData = res.data.result;
             console.error("resorder", res);
         },
-        onBar(tab) {
-            this.type = tab.label;
+        onBar(index, title) {
+            this.type = title;
             this.getOrder();
         },
         onSwipeLeft() {

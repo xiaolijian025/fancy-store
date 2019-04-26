@@ -2,7 +2,23 @@
     <div class="page">
         <headers :tabname="$t('m.HeaderCategoty')"></headers>
         <div class="container flex" id="container" v-show="mainarea" v-cloak>
-            <el-tabs tab-position="left" style="height: 100%;" @tab-click="onBar">
+            <van-tabs v-model="active" swipeable @click="onBar">
+                <van-tab :title="menuItem.title" v-for="(menuItem, menuIndex) in menuList" :key="menuIndex">
+                    <div class="rightItem" v-for="(categoryItem, categoryIndex) in categoryList" @click="onDetail(categoryItem)" :key="categoryIndex">
+                        <div class="category-item flex">
+                            <div class="item flex detail-item">
+                                <img class="goods-img" v-lazy="categoryItem.imgCover" />
+                                <div class="goods-textBox">
+                                    <p class="goods-name">{{ categoryItem.title }}</p>
+                                    <p class="goods-coach">¥{{ categoryItem.priceNow }}</p>
+                                    <div class="goods-cartBox"><i class="el-icon-goods" @click.stop="onAddCart(categoryItem)"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </van-tab>
+            </van-tabs>
+            <!-- <el-tabs tab-position="left" style="height: 100%;" @tab-click="onBar">
                 <el-tab-pane :label="menuItem.title" v-for="(menuItem, menuIndex) in menuList" :key="menuIndex">
                     <div class="rightItem" v-for="(categoryItem, categoryIndex) in categoryList" @click="onDetail(categoryItem)" :key="categoryIndex">
                         <div class="category-item flex">
@@ -17,7 +33,7 @@
                         </div>
                     </div>
                 </el-tab-pane>
-            </el-tabs>
+      </el-tabs>-->
         </div>
         <footers :urlRouter="$route.path" :cartnum="cartLength" ref="footer"></footers>
     </div>
@@ -36,7 +52,8 @@ export default {
             categoryContent: [],
             slidename: "slide-back",
             pageNum: 0,
-            type: "糖果·巧克力"
+            type: "糖果·巧克力",
+            active: 0
         };
     },
     mixins: [dataMixin],
@@ -67,8 +84,8 @@ export default {
             this.categoryList = res.data.result;
         },
         /*切换分类*/
-        onBar(tab) {
-            this.type = tab.label;
+        onBar(index, title) {
+            this.type = title;
             this.getCategoryList();
         },
         /*添加购物车*/
@@ -103,6 +120,9 @@ export default {
     //   padding-bottom: 44px;
 }
 
+.rightItem {
+    width: 100vw;
+}
 .leftbar {
     position: fixed;
     left: 0;

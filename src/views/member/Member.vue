@@ -34,12 +34,7 @@ export default {
         Headers: () => import("../../components/Header"),
         Footers: () => import("../../components/Footer")
     },
-    mounted() {
-        /*判断动画是进还是出*/
-        const slideArr = ["index", "category", "cart"];
-        slideArr.includes(this.$store.state.comname) ? (this.slidename = "slide-go") : (this.slidename = "slide-back");
-        this.setComname("member");
-    },
+    mounted() {},
     methods: {
         /*个人信息*/
         onInfo() {
