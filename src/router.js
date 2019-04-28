@@ -13,7 +13,7 @@ export default new Router({
             children: [
                 {
                     path: "product",
-                    component: () => import("./views/Home.vue")
+                    component: () => import("./views/product/Product.vue")
                 },
                 {
                     path: "category",
@@ -61,22 +61,6 @@ export default new Router({
         {
             path: "/orderwait",
             component: () => import("./views/order/OrderWait.vue")
-        },
-        {
-            path: "/waitpay",
-            component: () => import("./views/order/WaitPay.vue")
-        },
-        {
-            path: "/waitdeliver",
-            component: () => import("./views/order/WaitDeliver.vue")
-        },
-        {
-            path: "/waitreceive",
-            component: () => import("./views/order/WaitReceive.vue")
-        },
-        {
-            path: "/orderdown",
-            ccomponent: () => import("./views/order/OrderDown.vue")
         }
     ]
 });

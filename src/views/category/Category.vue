@@ -2,7 +2,7 @@
     <div class="page">
         <van-nav-bar :title="$t('m.HeaderCategoty')" background="#6495ed" />
         <div class="container flex" id="container">
-            <van-tabs v-model="active" swipeable @click="onBar">
+            <van-tabs @click="onBar" swipeable animated @change="onBar">
                 <van-tab :title="menuItem.title" v-for="(menuItem, menuIndex) in menuList" :key="menuIndex">
                     <div class="rightItem" v-for="(categoryItem, categoryIndex) in categoryList" @click="onDetail(categoryItem)" :key="categoryIndex">
                         <div class="category-item flex">
@@ -11,9 +11,7 @@
                                 <div class="goods-textBox">
                                     <p class="goods-name">{{ categoryItem.title }}</p>
                                     <p class="goods-coach">¥{{ categoryItem.priceNow }}</p>
-                                    <div class="goods-cartBox">
-                                        <i class="el-icon-goods" @click.stop="onAddCart(categoryItem)"></i>
-                                    </div>
+                                    <div class="goods-cartBox"><van-icon name="cart-o" @click.stop="onAddCart(categoryItem)" /></div>
                                 </div>
                             </div>
                         </div>
@@ -29,6 +27,7 @@ import { mapGetters } from "vuex";
 import { apiGetProduct } from "../../api/product.js";
 import { apiGetCategoryMenu } from "../../api/category.js";
 import { dataMixin } from "../../mixins/dataMixin.js";
+import { Tab, Tabs } from "vant";
 export default {
     data() {
         return {
@@ -37,8 +36,8 @@ export default {
             categoryContent: [],
             slidename: "slide-back",
             pageNum: 0,
-            type: "糖果·巧克力",
-            active: 0
+            type: "热门",
+            active: Number
         };
     },
     mixins: [dataMixin],
@@ -58,6 +57,10 @@ export default {
         async getMenuList() {
             let res = await apiGetCategoryMenu();
             this.menuList = res.data.result;
+            setTimeout(() => {
+                this.active = 0;
+                console.log("this.active: ", this.active);
+            }, 20);
         },
         /*获取分类列表*/
         async getCategoryList(tyoe) {
@@ -96,13 +99,8 @@ export default {
     display: flex;
     align-items: flex-start;
 }
-.category {
-    //   padding-top: 40px;
-    //   padding-bottom: 44px;
-}
-
 .rightItem {
-    width: 100vw;
+    //   width: 100vw;
 }
 .leftbar {
     position: fixed;
@@ -134,6 +132,7 @@ export default {
     border-bottom: 1px solid #ccc;
     height: 110px;
     width: 100%;
+    background: white;
 }
 
 .detail-item {
@@ -165,5 +164,8 @@ export default {
 }
 .el-tabs {
     width: 98%;
+}
+.van-tabs--line {
+    width: 100%;
 }
 </style>

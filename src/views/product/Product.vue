@@ -3,15 +3,11 @@
         <van-nav-bar :title="$t('m.HeaderIndex')" />
 
         <div class="langBox" @click="changeLang">{{ $t("m.local") }}</div>
+        <!-- <van-pull-refresh> -->
         <div class="container">
-            <div class="swiper-container">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide" v-for="(bannerItem, bannerIndex) in bannerList" :key="bannerIndex">
-                        <img :src="bannerItem.img" />
-                    </div>
-                </div>
-                <div class="swiper-pagination"></div>
-            </div>
+            <van-swipe :autoplay="3000" class="swipe">
+                <van-swipe-item v-for="(bannerItem, bannerIndex) in bannerList" :key="bannerIndex"> <img class="swipe_img" v-lazy="bannerItem.img" /> </van-swipe-item>
+            </van-swipe>
             <div class="product_header">热门推荐</div>
             <div class="content flex">
                 <div v-for="(productItem, productIndex) in productList" class="product_item" :key="productIndex">
@@ -21,24 +17,22 @@
                             <div>{{ productItem.title }}</div>
                             <div class="product-price flex">
                                 <div>{{ productItem.priceNow }}</div>
-                                <div class="product-price-origin">{{ productItem.priceOrigin }}</div>
+                                <div class="product-prfice-origin">{{ productItem.priceOrigin }}</div>
                             </div>
                         </div>
-                        <div class="goods-cartBox">
-                            <van-icon name="cart-o" @click.stop="onAddCart(productItem)" />
-                        </div>
+                        <div class="goods-cartBox"><van-icon name="cart-o" @click.stop="onAddCart(productItem)" /></div>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- </van-pull-refresh> -->
     </div>
 </template>
 
 <script>
-import Swiper from "swiper";
-import { apiGetProduct, apiGetBanner } from "../api/product.js";
-import { apiAddCart } from "../api/cart.js";
-import "../../public/css/swiper.min.css";
+import { Swipe, SwipeItem } from "vant";
+import { apiGetProduct, apiGetBanner } from "../../api/product.js";
+import { apiAddCart } from "../../api/cart.js";
 import { Toast } from "Vant";
 export default {
     data() {
@@ -51,16 +45,6 @@ export default {
     },
     components: {},
     mounted() {
-        new Swiper(".swiper-container", {
-            pagination: {
-                el: ".swiper-pagination"
-            },
-            paginationClickable: true,
-            spaceBetween: 0,
-            autoplay: 1500,
-            observer: true, //修改swiper自己或子元素时，自动初始化swiper
-            observeParents: true //修改swiper的父元素时，自动初始化swiper
-        });
         this.getBannerList();
         this.getProductData();
     },
@@ -111,11 +95,14 @@ export default {
 </script>
 
 <style lang="less" scoped>
-@import "../../public/less/variable.less";
-// @import "../../public/css/swiper.min.css";
-.swiper-slide img {
+@import "../../../public/less/variable.less";
+
+.swiper {
+    height: 100px;
+}
+.swipe_img {
     width: 100%;
-    height: 100%;
+    height: 160px;
 }
 .container {
     padding-bottom: 0;
@@ -124,7 +111,7 @@ export default {
 .content {
     //   margin-top: 20px;
     flex-wrap: wrap;
-    padding-bottom: 44px;
+    padding-bottom: 52px;
 }
 .product_header {
     font-size: 16px;
@@ -136,6 +123,8 @@ export default {
     box-sizing: border-box;
     border-right: 1px solid #ccc;
     border-bottom: 1px solid #ccc;
+    background: white;
+    padding-right: 10px;
     &:nth-of-type(even) {
         border-right: none;
     }

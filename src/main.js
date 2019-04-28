@@ -75,7 +75,7 @@ Vue.mixin({
     },
     methods: {
         onBack() {
-            this.$router.push("./member");
+            this.$router.back();
         },
         ...mapMutations({
             setGoods: "SET_GOODS",

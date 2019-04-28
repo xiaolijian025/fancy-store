@@ -12,3 +12,12 @@ export function apiRegister(user, pwd) {
         pwd: pwd
     });
 }
+export function apiGetUser() {
+    return axios.get(`/user/info`);
+}
+
+export function apiEditUser(sex) {
+    return axios.post(`user/update`, {
+        sex: sex
+    });
+}

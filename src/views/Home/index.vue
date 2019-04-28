@@ -15,9 +15,24 @@ import { Tabbar, TabbarItem } from "vant";
 export default {
     data() {
         return {
-            active: 0
+            active: Number
         };
     },
-    created() {}
+    created() {
+        switch (this.$route.path) {
+            case "/product":
+                this.active = 0;
+                break;
+            case "/category":
+                this.active = 1;
+                break;
+            case "/cart":
+                this.active = 2;
+                break;
+            case "/member":
+                this.active = 4;
+                break;
+        }
+    }
 };
 </script>

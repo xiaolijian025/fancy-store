@@ -5,14 +5,13 @@
             <nopage ref="nopage" :title="title"></nopage>
             <div>
                 <div class="cart-item flex-space" :class="{ selected: itemIndex === cartIndex }" v-for="(cartItem, cartIndex) in cartsData" :key="cartIndex">
-                    <van-checkbox class="goods_check" v-model="cartItem.goodsRadio" @click.native="onGoodsRadio(cartItem)"></van-checkbox>
                     <div class="flex" @click="onDetail(cartItem)">
+                        <van-checkbox v-model="cartItem.goodsRadio" @click="onGoodsRadio(cartItem)"></van-checkbox>
                         <img class="goods-img" v-lazy="cartItem.imgCover" />
                         <div class="goods-textBox">
                             <p class="goods-name">{{ cartItem.title }}</p>
                             <div class="goodsOp">
-                                <i class="el-icon-remove-outline" @click.stop="onCutCart(cartItem)"></i>
-                                <input type="text" :value="cartItem.num" />
+                                <i class="el-icon-remove-outline" @click.stop="onCutCart(cartItem)"></i> <input type="text" :value="cartItem.num" />
                                 <i class="s el-icon-circle-plus-outline" @click.stop="onAddCart(cartItem)"></i>
                             </div>
                             <p class="goods-coach">¥{{ cartItem.priceNow }}</p>
@@ -22,24 +21,7 @@
                 </div>
             </div>
         </div>
-
-        <div class="cartBottom-detail flex-space" v-show="$store.state.carts" v-cloak>
-            <!-- <van-submit-bar :price="allCoach" button-text="提交订单" @submit="onOrder">
-        <van-checkbox v-model="goodsRadioAll" @click.native="onSelectAll()">全选</van-checkbox>
-      </van-submit-bar>-->
-            <div>
-                <van-checkbox class="goods_check" v-model="goodsRadioAll" @click.native="onSelectAll()">
-                    合计:
-                    <span class="shopCoach">¥{{ allCoach }}</span>
-                </van-checkbox>
-                <!-- <el-checkbox v-model="goodsRadioAll" @click.native="onSelectAll()">
-          
-        </el-checkbox>-->
-            </div>
-
-            <div class="subminCart" @click="onOrder">提交订单</div>
-            -->
-        </div>
+        <van-submit-bar :price="allCoach" button-text="提交订单" @submit="onOrder"> <van-checkbox v-model="goodsRadioAll" @click="onSelectAll">全选</van-checkbox> </van-submit-bar>
     </div>
 </template>
 
@@ -47,6 +29,7 @@
 import { mapGetters, mapMutations } from "vuex";
 import { apiGetCart, apiDeleteCart, apiUpdateCart } from "../../api/cart.js";
 import { dataMixin } from "../../mixins/dataMixin.js";
+import { Checkbox, CheckboxGroup } from "vant";
 export default {
     data() {
         return {
@@ -54,7 +37,8 @@ export default {
             allCoach: 0,
             radioArr: [],
             itemIndex: "",
-            cartsData: []
+            cartsData: [],
+            checked: true
         };
     },
     mixins: [dataMixin],
@@ -92,7 +76,6 @@ export default {
         /*选择单个商品*/
         onGoodsRadio(item) {
             this.radioArr = [];
-            item.goodsRadio = !item.goodsRadio;
             this.cartsData.forEach(itemGoods => {
                 this.radioArr.push(itemGoods.goodsRadio);
             });
@@ -101,7 +84,6 @@ export default {
         },
         /*选择全部商品*/
         onSelectAll() {
-            this.goodsRadioAll = !this.goodsRadioAll;
             this.goodsRadioAll
                 ? this.cartsData.forEach(item => {
                       item.goodsRadio = true;
@@ -177,13 +159,15 @@ export default {
 .cart-item {
     border-bottom: 1px solid #cccccc;
     height: 120px;
-    padding: 0 20px;
+    padding: 0 10px;
+    background: white;
 }
 
 .goods-img {
     margin-right: 10px;
     width: 100px;
     height: 100px;
+    margin-left: 10px;
 }
 
 .goods-coach {
@@ -202,7 +186,7 @@ export default {
 }
 
 .cartBottom-detail {
-    height: 40px;
+    line-height: 60px;
     font-size: 14px;
     width: 100%;
     position: absolute;
@@ -216,5 +200,8 @@ export default {
 
 .subminCart {
     padding-right: 20px;
+}
+.van-submit-bar {
+    bottom: 50px;
 }
 </style>

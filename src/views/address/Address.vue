@@ -1,22 +1,7 @@
 <template>
     <div class="page">
-        <van-nav-bar title="我的地址" left-text="返回" left-arrow @click-left="onBack" />
-
-        <transition :name="slidename">
-            <div class="container" v-show="mainarea">
-                <nopage ref="nopage" :title="title"></nopage>
-
-                <div>
-                    <div class="address-item flex" v-for="(addressItem, addressIndex) in addressData" @click="onChooseAddress(addressItem)" :key="addressIndex">
-                        <p>{{ addressItem.address }}</p>
-                        <p>{{ addressItem.phone }}</p>
-                    </div>
-                </div>
-            </div>
-        </transition>
-        <div class="pageBottom" @click="onAddAddress">
-            <span class="tabbar-label">新增地址</span>
-        </div>
+        <van-nav-bar title="我的地址" left-arrow @click-left="onBack" />
+        <van-address-list v-model="chosenAddressId" :list="addressData" @edit="onEditAddress" @add="onAddAddress" />
     </div>
 </template>
 
@@ -27,7 +12,8 @@ import { dataMixin } from "../../mixins/dataMixin.js";
 export default {
     data() {
         return {
-            addressData: []
+            addressData: [],
+            chosenAddressId: ""
         };
     },
     mixins: [dataMixin],
@@ -46,8 +32,22 @@ export default {
 
     methods: {
         /*添加地址*/
-        onAddAddress() {
-            this.$router.push("./addaddress");
+        onAddAddress(item, index) {
+            this.$router.push({
+                path: "./addaddress",
+                query: {
+                    state: "add"
+                }
+            });
+        },
+        onEditAddress(item, index) {
+            this.$router.push({
+                path: "./addaddress",
+                query: {
+                    state: "edit",
+                    item: item
+                }
+            });
         },
         /*选择地址*/
         onChooseAddress(item) {
@@ -60,6 +60,7 @@ export default {
         async getAddress() {
             let res = await apiGetAddress();
             this.addressData = res.data.result;
+            this.addressData.length > 0 && (this.chosenAddressId = this.addressData[0].id);
             this.addressData.length === 0 ? (this.havePage = false) : (this.havePage = true);
         },
         ...mapMutations({

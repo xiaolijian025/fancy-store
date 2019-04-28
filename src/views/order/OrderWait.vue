@@ -1,62 +1,88 @@
 <template>
     <div class="page">
-        <van-nav-bar title="订单详情" left-text="返回" left-arrow @click-left="onBack" />
+        <van-nav-bar title="订单详情" left-arrow @click-left="onBack" />
 
-        <transition :name="slidename">
-            <div class="container" v-show="mainarea">
-                <div v-show="!havePage">
-                    <nopage></nopage>
-                </div>
-                <div v-show="havePage">
-                    <div class="chooseAddress" @click="onAddress()">
-                        <div class="flex chooseBox">
-                            <i class="el-icon-location-outline"></i>
-                            <div class="flex flex-space">
-                                <p v-show="!this.$store.state.chooseaddress">选择送货地址</p>
-                                <!-- <p
-                  v-show="this.$store.state.chooseaddress"
-                >{{ this.$store.state.chooseaddress.address }}</p>-->
-                                <i class="el-icon-arrow-right"></i>
-                            </div>
+        <div class="container">
+            <div>
+                <div class="address_show" @click="onAddressChoose">
+                    <div v-if="addressChooseName.length == 0"><van-cell title="选择地址" is-link /></div>
+                    <div v-else>
+                        <div class="flex-space">
+                            <div>{{ addressChooseName }}</div>
+                            <div>{{ addressChooseTel }}</div>
                         </div>
-                    </div>
-                    <div class="orderItem flex" v-for="(orderItem, orderIndex) in $store.state.orders" :key="orderIndex">
-                        <img :src="orderItem.imgCover" class="goodsImg" />
-                        <div>
-                            <p class="goods-name">{{ orderItem.title }}</p>
-                            <p class="goods-num">x{{ orderItem.num }}</p>
-                            <p class="goods-price">¥{{ orderItem.priceNow }}</p>
-                        </div>
-                    </div>
-                    <div class="orderBottom flex-space">
-                        <span>总金额:{{ allCoach }}</span>
-                        <span @click="onOrder">结算</span>
+                        <div>{{ addressChooseAddress }}</div>
                     </div>
                 </div>
+                <!-- <van-contact-card
+          :type="cardType"
+          :name="addressChooseName"
+          :tel="addressChooseTel"
+          
+        />-->
+                <!-- 联系人列表 -->
+                <van-popup v-model="showList" position="bottom"> <van-contact-list v-model="chosenContactId" :list="addressData" @add="onAdd" @edit="onEdit" @select="onSelect" /> </van-popup>
+                <van-card
+                    v-for="(orderItem, orderIndex) in $store.state.orders"
+                    :key="orderIndex"
+                    :num="orderItem.num"
+                    :price="orderItem.priceNow"
+                    :title="orderItem.title"
+                    :thumb="orderItem.imgCover"
+                />
+                <van-submit-bar :price="allCoach" button-text="提交订单" @submit="onOrder" />
             </div>
-        </transition>
+        </div>
     </div>
 </template>
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import { apiAddOrder } from "../../api/order.js";
+import { apiGetAddress } from "../../api/address.js";
+import { Dialog } from "vant";
 export default {
     data() {
         return {
+            chosenContactId: null,
+            editingContact: {},
+            showList: false,
+            showEdit: false,
+            isEdit: false,
+            list: [
+                {
+                    name: "张三",
+                    tel: "13000000000",
+                    id: 0
+                }
+            ],
             allCoach: 0,
             havePage: false,
             slidename: "slide-go",
-            prodectId: []
+            prodectId: [],
+            addressData: [],
+            addressChooseName: "",
+            addressChooseTel: "",
+            addressChooseAddress: "",
+            addressItem: ""
         };
     },
     components: {
         Nopage: () => import("../../components/NoPage")
     },
     computed: {
+        cardType() {
+            return this.chosenContactId !== null ? "edit" : "add";
+        },
+
+        currentContact() {
+            const id = this.chosenContactId;
+            return id !== null ? this.list.filter(item => item.id === id)[0] : {};
+        },
         ...mapGetters(["this.$store.state.orders", "this.$store.state.chooseaddress"])
     },
     mounted() {
+        this.getAddress();
         this.$store.state.orders === undefined ? (this.havePage = false) : (this.havePage = true);
 
         this.$store.state.orders.forEach(item => {
@@ -72,25 +98,66 @@ export default {
     },
 
     methods: {
+        onAddressChoose() {
+            this.showList = true;
+            console.log("***");
+        },
+        // 添加联系人
+        onAdd() {
+            this.$router.push("./addaddress");
+        },
+
+        // 编辑联系人
+        onEdit(item) {
+            this.$router.push({
+                path: "./addaddress",
+                query: {
+                    state: "edit",
+                    item: item
+                }
+            });
+        },
+        onSelect(item, index) {
+            console.log("item", item);
+            this.showList = false;
+            this.addressChooseName = item.name;
+            this.addressChooseTel = item.tel;
+            this.addressChooseAddress = item.address + item.detailAddress;
+            this.addressItem = item;
+        },
+        // 保存联系人
+        onSave(info) {
+            this.showEdit = false;
+            this.showList = false;
+
+            if (this.isEdit) {
+                this.list = this.list.map(item => (item.id === info.id ? info : item));
+            } else {
+                this.list.push(info);
+            }
+            this.chosenContactId = info.id;
+        },
+        async getAddress() {
+            let res = await apiGetAddress();
+            this.addressData = res.data.result;
+        },
         /*我的订单*/
         onOrder() {
-            this.$confirm("是否现在结算该订单?", "提示", {
-                confirmButtonText: "确定",
-                cancelButtonText: "稍后",
-                type: "warning"
+            Dialog.confirm({
+                message: "是否现在结算该订单?"
             })
                 .then(() => {
-                    this.addOrder("已付款");
+                    this.addOrder("payed");
+                    // on confirm
                 })
                 .catch(() => {
-                    this.addOrder("待付款");
+                    // on cancel
+                    this.addOrder("paying");
                 });
         },
         async addOrder(status) {
-            console.log("this.prodectId", Array.isArray(this.prodectId));
-            console.log("this.prodectId: ", this.prodectId);
-            let res = await apiAddOrder(this.prodectId, this.$store.state.chooseaddress, this.allCoach, status);
-            if ((status = "已付款")) {
+            let res = await apiAddOrder(this.prodectId, this.addressItem, this.allCoach, status);
+            if ((status = "payed")) {
                 setTimeout(() => {
                     this.$router.push({
                         path: "/order"
@@ -118,6 +185,10 @@ export default {
 
 <style lang="less" scoped>
 @import "../../../public/less/variable.less";
+.address_show {
+    background: white;
+    padding: 10px;
+}
 .chooseBox {
     margin-top: 10px;
     margin-bottom: 10px;
@@ -158,18 +229,5 @@ export default {
     line-height: 40px;
     padding: 0 10px;
     box-sizing: border-box;
-}
-
-.arrow_next {
-    width: 60px;
-    height: 40px;
-    background: url("../../../public/img/icon/common_sprites.png") 0px -313px; /* no */
-    background-size: 100%;
-}
-.address_img {
-    width: 60px;
-    height: 48px;
-    background: url("../../../public/img/icon/common_sprites.png") 0px -203px; /* no */
-    background-size: 100%;
 }
 </style>

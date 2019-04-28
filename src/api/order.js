@@ -9,8 +9,8 @@ export function apiAddOrder(id, address, price, status) {
     });
 }
 
-export function apiGetOrder() {
-    return axios.get(`order/all`);
+export function apiGetOrder(status) {
+    return axios.get(`order/all?status=${status}`);
 }
 
 export function apiDeleteCart(id) {
