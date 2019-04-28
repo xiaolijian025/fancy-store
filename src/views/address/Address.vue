@@ -1,6 +1,7 @@
 <template>
     <div class="page">
         <van-nav-bar title="我的地址" left-arrow @click-left="onBack" />
+        <nopage ref="nopage" :title="title"></nopage>
         <van-address-list v-model="chosenAddressId" :list="addressData" @edit="onEditAddress" @add="onAddAddress" />
     </div>
 </template>
@@ -59,9 +60,20 @@ export default {
         },
         async getAddress() {
             let res = await apiGetAddress();
+            if (res.data.code == -1) {
+                this.title = "用户未登陆,请千万登陆~";
+                setTimeout(() => {
+                    this.$refs.nopage.onDisplay();
+                    this.$refs.nopage.onLogin();
+                }, 300);
+                return;
+            }
             this.addressData = res.data.result;
+            if (this.addressData.length == 0) {
+                this.title = "地址空空如也,请前往添加~";
+                this.$refs.nopage.onDisplay();
+            }
             this.addressData.length > 0 && (this.chosenAddressId = this.addressData[0].id);
-            this.addressData.length === 0 ? (this.havePage = false) : (this.havePage = true);
         },
         ...mapMutations({
             setChooseaddress: "SET_CHOOSEADDRESS",

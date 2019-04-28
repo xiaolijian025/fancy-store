@@ -13,13 +13,13 @@ export function apiGetOrder(status) {
     return axios.get(`order/all?status=${status}`);
 }
 
-export function apiDeleteCart(id) {
-    return axios.post(`cart/delete`, {
+export function apiDeleteOrder(id) {
+    return axios.post(`order/delete`, {
         id: id
     });
 }
-export function apiUpdateCart(id, state) {
-    return axios.post(`cart/update`, {
+export function apiUpdateOrder(id, state) {
+    return axios.post(`order/update`, {
         id: id,
         add: state
     });

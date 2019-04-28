@@ -61,6 +61,10 @@ export default new Router({
         {
             path: "/orderwait",
             component: () => import("./views/order/OrderWait.vue")
+        },
+        {
+            path: "/set",
+            component: () => import("./views/member/Set.vue")
         }
     ]
 });

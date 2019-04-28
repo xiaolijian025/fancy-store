@@ -2,36 +2,24 @@
     <div class="page">
         <van-nav-bar :title="$t('m.HeaderDetail')" left-text="返回" left-arrow @click-left="onBack" />
 
-        <transition :name="slidename">
-            <div class="container" v-show="mainarea">
-                <div v-show="!havePage">
-                    <nopage></nopage>
+        <div class="container">
+            <div v-show="!havePage">
+                <nopage></nopage>
+            </div>
+            <div v-show="havePage">
+                <img :src="$store.state.goods.GoodsImage" class="goodsImg" />
+                <div class="detail-content">
+                    <p class="goods-name">{{ $store.state.goods.GoodsName }}</p>
+                    <p class="goods-price">¥{{ $store.state.goods.GoodsPrice }}</p>
                 </div>
-                <div v-show="havePage">
-                    <img :src="$store.state.goods.GoodsImage" class="goodsImg" />
-                    <div class="detail-content">
-                        <p class="goods-name">{{ $store.state.goods.GoodsName }}</p>
-                        <p class="goods-price">¥{{ $store.state.goods.GoodsPrice }}</p>
-                    </div>
-                </div>
-            </div>
-        </transition>
-        <div class="detail-bottom flex-align-center flex-around">
-            <div class="toCart">
-                <i @click="toCart"></i>
-                <transition name="bullet">
-                    <p v-show="cartNum">{{ cartLength }}</p>
-                </transition>
-            </div>
-
-            <div class="addCart" @click="onCartModel()">
-                <span class="tabbar-label">加入购物车</span>
-            </div>
-            <div class="external addPay" @click="onBuyModel()">
-                <span class="tabbar-label">立即购买</span>
             </div>
         </div>
 
+        <van-goods-action>
+            <van-goods-action-mini-btn icon="cart-o" text="购物车" @click="toCart" />
+            <van-goods-action-big-btn text="加入购物车" @click="onCartModel" />
+            <van-goods-action-big-btn primary text="立即购买" @click="onBuyModel" />
+        </van-goods-action>
         <transition name="slide-up">
             <div class="model" v-show="addCartModel" v-cloak>
                 <div class="model-content addCart-content" @click.stop="addCartModel = true">
@@ -68,6 +56,7 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
+import { GoodsAction, GoodsActionBigBtn, GoodsActionMiniBtn } from "vant";
 export default {
     data() {
         return {

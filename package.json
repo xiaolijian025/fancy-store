@@ -18,6 +18,8 @@
         "lint-staged": "^8.1.1",
         "mockjs": "^1.0.1-beta3",
         "postcss-px2rem": "^0.3.0",
+        "prettier": "^1.17.0",
+        "qiniu-js": "^2.5.4",
         "raven-js": "^3.27.0",
         "swiper": "^4.4.6",
         "terser": "^3.14.1",

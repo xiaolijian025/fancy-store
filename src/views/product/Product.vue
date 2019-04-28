@@ -2,11 +2,13 @@
     <div class="page">
         <van-nav-bar :title="$t('m.HeaderIndex')" />
 
-        <div class="langBox" @click="changeLang">{{ $t("m.local") }}</div>
+        <!-- <div class="langBox" @click="changeLang">{{ $t("m.local") }}</div> -->
         <!-- <van-pull-refresh> -->
         <div class="container">
             <van-swipe :autoplay="3000" class="swipe">
-                <van-swipe-item v-for="(bannerItem, bannerIndex) in bannerList" :key="bannerIndex"> <img class="swipe_img" v-lazy="bannerItem.img" /> </van-swipe-item>
+                <van-swipe-item v-for="(bannerItem, bannerIndex) in bannerList" :key="bannerIndex">
+                    <img class="swipe_img" v-lazy="bannerItem.img" />
+                </van-swipe-item>
             </van-swipe>
             <div class="product_header">热门推荐</div>
             <div class="content flex">
@@ -20,7 +22,9 @@
                                 <div class="product-prfice-origin">{{ productItem.priceOrigin }}</div>
                             </div>
                         </div>
-                        <div class="goods-cartBox"><van-icon name="cart-o" @click.stop="onAddCart(productItem)" /></div>
+                        <div class="goods-cartBox">
+                            <van-icon name="cart-o" @click.stop="onAddCart(productItem)" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -39,8 +43,7 @@ export default {
         return {
             pageNum: 0,
             bannerList: [],
-            productList: [],
-            slidename: "slide-back"
+            productList: []
         };
     },
     components: {},
@@ -57,9 +60,9 @@ export default {
         },
 
         /*切换语言包 */
-        changeLang() {
-            this.$i18n.locale == "zh" ? (this.$i18n.locale = "en") : (this.$i18n.locale = "zh");
-        },
+        // changeLang() {
+        //     this.$i18n.locale == "zh" ? (this.$i18n.locale = "en") : (this.$i18n.locale = "zh");
+        // },
         /*获取商品列表*/
         async getGoodsList() {
             let res = await this.$http.get("/api/homedata");
@@ -138,12 +141,12 @@ export default {
     padding: 1px 8px;
 }
 
-.langBox {
-    position: fixed;
-    right: 10px;
-    top: 10px;
-    font-size: 13px;
-    z-index: 10;
-    color: white;
-}
+// .langBox {
+//     position: fixed;
+//     right: 10px;
+//     top: 10px;
+//     font-size: 13px;
+//     z-index: 10;
+//     color: white;
+// }
 </style>

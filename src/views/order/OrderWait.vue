@@ -5,7 +5,9 @@
         <div class="container">
             <div>
                 <div class="address_show" @click="onAddressChoose">
-                    <div v-if="addressChooseName.length == 0"><van-cell title="选择地址" is-link /></div>
+                    <div v-if="addressChooseName.length == 0">
+                        <van-cell title="选择地址" is-link />
+                    </div>
                     <div v-else>
                         <div class="flex-space">
                             <div>{{ addressChooseName }}</div>
@@ -14,14 +16,10 @@
                         <div>{{ addressChooseAddress }}</div>
                     </div>
                 </div>
-                <!-- <van-contact-card
-          :type="cardType"
-          :name="addressChooseName"
-          :tel="addressChooseTel"
-          
-        />-->
                 <!-- 联系人列表 -->
-                <van-popup v-model="showList" position="bottom"> <van-contact-list v-model="chosenContactId" :list="addressData" @add="onAdd" @edit="onEdit" @select="onSelect" /> </van-popup>
+                <van-popup v-model="showList" position="bottom">
+                    <van-contact-list v-model="chosenContactId" :list="addressData" @add="onAdd" @edit="onEdit" @select="onSelect" />
+                </van-popup>
                 <van-card
                     v-for="(orderItem, orderIndex) in $store.state.orders"
                     :key="orderIndex"
@@ -30,7 +28,10 @@
                     :title="orderItem.title"
                     :thumb="orderItem.imgCover"
                 />
-                <van-submit-bar :price="allCoach" button-text="提交订单" @submit="onOrder" />
+                <van-submit-bar v-if="$route.query.status == 'todo'" :price="allCoach" button-text="提交订单" @submit="onOrder" />
+                <van-submit-bar v-if="$route.query.status == 'paying'" :price="allCoach" button-text="付款" @submit="onOrder" />
+                <van-submit-bar v-if="$route.query.status == 'payed'" :price="allCoach" button-text="确认收货" @submit="onDone" />
+                <van-submit-bar v-if="$route.query.status == 'done'" :price="allCoach" button-text="已完成" disabled />
             </div>
         </div>
     </div>
@@ -38,7 +39,7 @@
 
 <script>
 import { mapGetters, mapMutations } from "vuex";
-import { apiAddOrder } from "../../api/order.js";
+import { apiAddOrder, apiUpdateOrder } from "../../api/order.js";
 import { apiGetAddress } from "../../api/address.js";
 import { Dialog } from "vant";
 export default {
@@ -83,17 +84,13 @@ export default {
     },
     mounted() {
         this.getAddress();
-        this.$store.state.orders === undefined ? (this.havePage = false) : (this.havePage = true);
-
         this.$store.state.orders.forEach(item => {
             //   sums.push(item.priceNow);
             this.allCoach += item.priceNow * item.num;
             console.log("item._id: ", typeof item._id);
             this.prodectId.push(item._id);
         });
-        /*判断动画是进还是出*/
-        const slideArr = ["goodsdetail", "cart"];
-        slideArr.includes(this.$store.state.comname) ? (this.slidename = "slide-go") : (this.slidename = "slide-back");
+
         this.setComname("orderwait");
     },
 
@@ -154,6 +151,9 @@ export default {
                     // on cancel
                     this.addOrder("paying");
                 });
+        },
+        async onDone() {
+            let res = await apiUpdateOrder(this.$store.state.orders.id);
         },
         async addOrder(status) {
             let res = await apiAddOrder(this.prodectId, this.addressItem, this.allCoach, status);

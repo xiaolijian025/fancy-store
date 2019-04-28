@@ -1,6 +1,6 @@
 <template>
     <div class="page">
-        <van-nav-bar title="登录" left-text="返回" left-arrow @click-left="onBack" />
+        <van-nav-bar title="登录" left-arrow @click-left="onBack" />
 
         <div class="login">
             <van-cell-group>
@@ -16,6 +16,7 @@
 
 <script>
 import { Toast } from "vant";
+import { mapGetters, mapMutations } from "vuex";
 import { apiLogin } from "../../api/user.js";
 export default {
     data() {
@@ -32,6 +33,7 @@ export default {
         async onLogin() {
             let res = await apiLogin(this.userAccount, this.userPasswd);
             if (res.data.code == 0) {
+                // this.setCarts(res.data.result.carts.length);
                 this.$router.push({
                     path: "/"
                 });
@@ -47,7 +49,10 @@ export default {
             this.$router.push({
                 path: "/register"
             });
-        }
+        },
+        ...mapMutations({
+            setCarts: "SET_CARTS"
+        })
     }
 };
 </script>

@@ -7,7 +7,11 @@
                 <img src="../../../public/img/github.png" alt />
                 <p>Open Free Share</p>
             </div>
-            <div class="floor floor_item floor_two flex-space" @click="onInfo">
+            <van-cell class="member_item" title="个人信息" is-link to="info" />
+            <van-cell class="member_item" title="我的订单" is-link to="order" />
+            <van-cell class="member_item" title="我的地址" is-link to="address" />
+            <van-cell class="member_item" title="设置" is-link to="set" />
+            <!-- <div class="floor floor_item floor_two flex-space" @click="onInfo">
                 <p>{{ $t("m.member.info") }}</p>
                 <i class="el-icon-arrow-right"></i>
             </div>
@@ -18,7 +22,7 @@
             <div class="floor floor_item floor_two flex-space" @click="onAddress">
                 <p>{{ $t("m.member.address") }}</p>
                 <i class="el-icon-arrow-right"></i>
-            </div>
+      </div>-->
         </div>
     </div>
 </template>
@@ -81,12 +85,7 @@ export default {
         font-size: 13px;
     }
 }
-
-.floor_item {
-    padding: 0 10px;
-    line-height: 40px;
-    font-size: 14px;
-    background: @base_color;
-    margin-bottom: 20px;
+.member_item {
+    margin-bottom: 10px;
 }
 </style>

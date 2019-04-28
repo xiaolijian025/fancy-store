@@ -1,6 +1,8 @@
 <template>
     <div class="page">
-        <van-nav-bar :title="$t('m.HeaderCart')" />
+        <van-nav-bar :title="$t('m.HeaderCart')">
+            <van-icon name="edit" slot="right" @click="onEdit" />
+        </van-nav-bar>
         <div class="container">
             <nopage ref="nopage" :title="title"></nopage>
             <div>
@@ -11,17 +13,20 @@
                         <div class="goods-textBox">
                             <p class="goods-name">{{ cartItem.title }}</p>
                             <div class="goodsOp">
-                                <i class="el-icon-remove-outline" @click.stop="onCutCart(cartItem)"></i> <input type="text" :value="cartItem.num" />
+                                <i class="el-icon-remove-outline" @click.stop="onCutCart(cartItem)"></i>
+                                <input type="text" :value="cartItem.num" />
                                 <i class="s el-icon-circle-plus-outline" @click.stop="onAddCart(cartItem)"></i>
                             </div>
                             <p class="goods-coach">¥{{ cartItem.priceNow }}</p>
                         </div>
                     </div>
-                    <i class="remove el-icon-delete" @click.stop="onRemove(cartItem, cartIndex)"></i>
+                    <i class="remove el-icon-delete" @click.stop="onRemove(cartItem, cartIndex)" v-show="showEdit"></i>
                 </div>
             </div>
         </div>
-        <van-submit-bar :price="allCoach" button-text="提交订单" @submit="onOrder"> <van-checkbox v-model="goodsRadioAll" @click="onSelectAll">全选</van-checkbox> </van-submit-bar>
+        <van-submit-bar :price="allCoach" button-text="提交订单" @submit="onOrder">
+            <van-checkbox v-model="goodsRadioAll" @click="onSelectAll">全选</van-checkbox>
+        </van-submit-bar>
     </div>
 </template>
 
@@ -38,7 +43,8 @@ export default {
             radioArr: [],
             itemIndex: "",
             cartsData: [],
-            checked: true
+            checked: true,
+            showEdit: false
         };
     },
     mixins: [dataMixin],
@@ -117,7 +123,19 @@ export default {
             });
         },
         /*删除商品*/
-        async onRemove(item, index) {
+        onRemove(item, index) {
+            Dialog.confirm({
+                message: "确定删除"
+            })
+                .then(() => {
+                    this.sureRemove(item, index);
+                    // on confirm
+                })
+                .catch(() => {
+                    // on cancel
+                });
+        },
+        async sureRemove(item, index) {
             let res = await apiDeleteCart(item._id);
             this.cartsData.splice(index, 1);
         },
@@ -129,17 +147,15 @@ export default {
             });
 
             if (orderArr.length) {
-                this.$router.push("orderwait");
+                this.$router.push({
+                    path: "orderwait",
+                    status: "todo"
+                });
                 this.setOrders(orderArr);
             }
         },
-        /*向左滑出现删除*/
-        onSwipeLeft(index) {
-            this.itemIndex = index;
-        },
-        /*向右滑隐藏删除*/
-        onSwipeRight() {
-            this.itemIndex = "";
+        onEdit() {
+            this.showEdit != this.showEdit;
         },
         /*进入商品详情*/
         onDetail(item) {

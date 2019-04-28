@@ -4,13 +4,15 @@
 
         <van-tabs v-model="active" swipeable animated @click="onBar" @change="onBar">
             <van-tab :title="item.name" v-for="(item, index) in orderTab" :key="index">
-                <div class="order_item" v-for="(itemPay, itemIndex) in orderData" :key="itemIndex">
+                <div class="order_item" v-for="(itemPay, itemIndex) in orderData" :key="itemIndex" @click="onOrderDetail(itemPay)">
                     <div class="order-top flex-space">
                         <p>订单号:{{ itemPay._id }}</p>
                         <van-tag :type="itemPay.color">{{ itemPay.status | statusFilter }}</van-tag>
                     </div>
                     <div class="order-content flex">
-                        <div class="flex" v-for="(itemProduct, indexProduct) in itemPay.products" :key="indexProduct"><img class="order-img" :src="itemProduct.imgCover" /></div>
+                        <div class="flex" v-for="(itemProduct, indexProduct) in itemPay.products" :key="indexProduct">
+                            <img class="order-img" :src="itemProduct.imgCover" />
+                        </div>
                     </div>
                 </div>
             </van-tab>
@@ -57,6 +59,16 @@ export default {
         this.getOrder();
     },
     methods: {
+        onOrderDetail(item) {
+            this.setOrders(item);
+            this.$router.push({
+                path: "./OrderWait.vue",
+                query: {
+                    status: item.status,
+                    data: item
+                }
+            });
+        },
         async getOrder() {
             let res = await apiGetOrder(this.type);
             this.orderData = res.data.result.map(item => {
@@ -97,7 +109,8 @@ export default {
         },
         ...mapMutations({
             setOrdercur: "SET_ORDERCUR",
-            setOrdertab: "SET_ORDERTAB"
+            setOrdertab: "SET_ORDERTAB",
+            setOrders: "SET_ORDERS"
         })
     }
 };
