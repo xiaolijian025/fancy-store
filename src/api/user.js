@@ -16,8 +16,9 @@ export function apiGetUser() {
     return axios.get(`/user/info`);
 }
 
-export function apiEditUser(sex) {
+export function apiEditUser(sex, avatar) {
     return axios.post(`user/update`, {
-        sex: sex
+        sex: sex,
+        avatar: avatar
     });
 }

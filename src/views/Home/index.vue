@@ -4,7 +4,7 @@
         <van-tabbar v-model="active">
             <van-tabbar-item icon="home-o" to="/product">产品</van-tabbar-item>
             <van-tabbar-item icon="cluster-o" dot to="/category">分类</van-tabbar-item>
-            <van-tabbar-item icon="shopping-cart-o" info="5" to="/cart">购物车</van-tabbar-item>
+            <van-tabbar-item icon="shopping-cart-o" :info="$store.state.cartsLength" to="/cart">购物车</van-tabbar-item>
             <van-tabbar-item icon="friends-o" info="20" to="/member">我的</van-tabbar-item>
         </van-tabbar>
     </div>
@@ -12,11 +12,15 @@
 
 <script>
 import { Tabbar, TabbarItem } from "vant";
+import { mapGetters } from "vuex";
 export default {
     data() {
         return {
             active: Number
         };
+    },
+    computed: {
+        ...mapGetters(["this.$store.state.cartsLength"])
     },
     created() {
         switch (this.$route.path) {
@@ -30,7 +34,7 @@ export default {
                 this.active = 2;
                 break;
             case "/member":
-                this.active = 4;
+                this.active = 3;
                 break;
         }
     }

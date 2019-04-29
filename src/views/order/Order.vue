@@ -10,9 +10,7 @@
                         <van-tag :type="itemPay.color">{{ itemPay.status | statusFilter }}</van-tag>
                     </div>
                     <div class="order-content flex">
-                        <div class="flex" v-for="(itemProduct, indexProduct) in itemPay.products" :key="indexProduct">
-                            <img class="order-img" :src="itemProduct.imgCover" />
-                        </div>
+                        <div class="flex" v-for="(itemProduct, indexProduct) in itemPay.products" :key="indexProduct"><img class="order-img" :src="itemProduct.imgCover" /></div>
                     </div>
                 </div>
             </van-tab>
@@ -23,21 +21,16 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import { apiGetOrder } from "../../api/order.js";
-import { filter } from "minimatch";
-import { Tag } from "vant";
 export default {
     filters: {
         statusFilter: function(status) {
             switch (status) {
                 case "payed":
                     return "已支付";
-                    break;
                 case "paying":
                     return "待付款";
-                    break;
                 case "done":
                     return "已完成";
-                    break;
             }
         }
     },
@@ -49,9 +42,7 @@ export default {
             orderTab: [{ name: "待付款" }, { name: "待收货" }, { name: "已完成" }, { name: "全部" }]
         };
     },
-    components: {
-        Nopage: () => import("../../components/NoPage")
-    },
+    components: {},
     computed: {
         ...mapGetters(["this.$store.state.pays", "this.$store.state.ordercur", "this.$store.state.ordertab"])
     },
@@ -60,9 +51,9 @@ export default {
     },
     methods: {
         onOrderDetail(item) {
-            this.setOrders(item);
+            this.setOrders(item.products);
             this.$router.push({
-                path: "./OrderWait.vue",
+                path: "orderwait",
                 query: {
                     status: item.status,
                     data: item
@@ -81,6 +72,7 @@ export default {
                 }
                 return item;
             });
+
             console.error("resorder", res);
         },
         onBar(index, title) {

@@ -33,10 +33,14 @@ export default {
         async onLogin() {
             let res = await apiLogin(this.userAccount, this.userPasswd);
             if (res.data.code == 0) {
+                console.log("resdata", res.data);
+                this.setUser(res.data.result.userInfo);
+                this.setCartsLength(res.data.result.carts.length);
+                this.onBack();
                 // this.setCarts(res.data.result.carts.length);
-                this.$router.push({
-                    path: "/"
-                });
+                // this.$router.push({
+                //   path: "/"
+                // });
             } else {
                 Toast({
                     message: res.data.msg,
@@ -51,7 +55,8 @@ export default {
             });
         },
         ...mapMutations({
-            setCarts: "SET_CARTS"
+            setUser: "SET_USER",
+            setCartsLength: "SET_CARTSLENGTH"
         })
     }
 };

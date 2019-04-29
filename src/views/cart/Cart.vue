@@ -1,8 +1,6 @@
 <template>
     <div class="page">
-        <van-nav-bar :title="$t('m.HeaderCart')">
-            <van-icon name="edit" slot="right" @click="onEdit" />
-        </van-nav-bar>
+        <van-nav-bar :title="$t('m.HeaderCart')"> <van-icon name="edit" slot="right" @click="onEdit" /> </van-nav-bar>
         <div class="container">
             <nopage ref="nopage" :title="title"></nopage>
             <div>
@@ -13,8 +11,7 @@
                         <div class="goods-textBox">
                             <p class="goods-name">{{ cartItem.title }}</p>
                             <div class="goodsOp">
-                                <i class="el-icon-remove-outline" @click.stop="onCutCart(cartItem)"></i>
-                                <input type="text" :value="cartItem.num" />
+                                <i class="el-icon-remove-outline" @click.stop="onCutCart(cartItem)"></i> <input type="text" :value="cartItem.num" />
                                 <i class="s el-icon-circle-plus-outline" @click.stop="onAddCart(cartItem)"></i>
                             </div>
                             <p class="goods-coach">¥{{ cartItem.priceNow }}</p>
@@ -24,9 +21,7 @@
                 </div>
             </div>
         </div>
-        <van-submit-bar :price="allCoach" button-text="提交订单" @submit="onOrder">
-            <van-checkbox v-model="goodsRadioAll" @click="onSelectAll">全选</van-checkbox>
-        </van-submit-bar>
+        <van-submit-bar :price="allCoach" button-text="提交订单" @submit="onOrder"> <van-checkbox v-model="goodsRadioAll" @click="onSelectAll">全选</van-checkbox> </van-submit-bar>
     </div>
 </template>
 
@@ -149,7 +144,9 @@ export default {
             if (orderArr.length) {
                 this.$router.push({
                     path: "orderwait",
-                    status: "todo"
+                    query: {
+                        status: "todo"
+                    }
                 });
                 this.setOrders(orderArr);
             }

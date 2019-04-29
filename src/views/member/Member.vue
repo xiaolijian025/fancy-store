@@ -4,8 +4,8 @@
 
         <div class="container">
             <div class="floor floor_one" @click="toLogin">
-                <img src="../../../public/img/github.png" alt />
-                <p>Open Free Share</p>
+                <!-- <img :src="$store.state.user.avatar" alt>
+        <p>{{$store.state.user.user}}</p>-->
             </div>
             <van-cell class="member_item" title="个人信息" is-link to="info" />
             <van-cell class="member_item" title="我的订单" is-link to="order" />
@@ -28,9 +28,14 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
     data() {
         return {};
+    },
+    computed: {
+        ...mapGetters(["this.$store.state.user"])
     },
     components: {},
     mounted() {},
@@ -64,25 +69,24 @@ export default {
     width: 100%;
     height: 200px;
     background: @theme_background;
-    position: relative;
+    text-align: center;
     img {
-        position: absolute;
-        width: 9px;
-        height: 45px;
-        left: 0;
-        right: 0;
-        top: 15%;
-        margin: auto;
+        // position: absolute;
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        margin-top: 30px;
     }
     p {
-        position: absolute;
-        bottom: 25%;
-        left: 0;
-        right: 0;
-        margin: 0 auto;
-        text-align: center;
+        // position: absolute;
+        // bottom: 25%;
+        // left: 0;
+        // right: 0;
+        // margin: 0 auto;
+        // text-align: center;
         color: white;
-        font-size: 13px;
+        margin-top: 20px;
+        font-size: 18px;
     }
 }
 .member_item {

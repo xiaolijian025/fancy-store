@@ -5,9 +5,7 @@
         <div class="container">
             <div>
                 <div class="address_show" @click="onAddressChoose">
-                    <div v-if="addressChooseName.length == 0">
-                        <van-cell title="选择地址" is-link />
-                    </div>
+                    <div v-if="addressChooseName.length == 0"><van-cell title="选择地址" is-link /></div>
                     <div v-else>
                         <div class="flex-space">
                             <div>{{ addressChooseName }}</div>
@@ -17,9 +15,7 @@
                     </div>
                 </div>
                 <!-- 联系人列表 -->
-                <van-popup v-model="showList" position="bottom">
-                    <van-contact-list v-model="chosenContactId" :list="addressData" @add="onAdd" @edit="onEdit" @select="onSelect" />
-                </van-popup>
+                <van-popup v-model="showList" position="bottom"> <van-contact-list v-model="chosenContactId" :list="addressData" @add="onAdd" @edit="onEdit" @select="onSelect" /> </van-popup>
                 <van-card
                     v-for="(orderItem, orderIndex) in $store.state.orders"
                     :key="orderIndex"
@@ -68,9 +64,7 @@ export default {
             addressItem: ""
         };
     },
-    components: {
-        Nopage: () => import("../../components/NoPage")
-    },
+    components: {},
     computed: {
         cardType() {
             return this.chosenContactId !== null ? "edit" : "add";
@@ -80,18 +74,21 @@ export default {
             const id = this.chosenContactId;
             return id !== null ? this.list.filter(item => item.id === id)[0] : {};
         },
-        ...mapGetters(["this.$store.state.orders", "this.$store.state.chooseaddress"])
+        ...mapGetters(["this.$store.state.orders"])
+    },
+    created() {
+        console.error("***", this.$route.query.status);
     },
     mounted() {
         this.getAddress();
+        console.log("this.$store.state.orders: ", this.$store.state.orders);
         this.$store.state.orders.forEach(item => {
-            //   sums.push(item.priceNow);
             this.allCoach += item.priceNow * item.num;
-            console.log("item._id: ", typeof item._id);
-            this.prodectId.push(item._id);
+            console.log("item.num: ", item.num);
+            console.log("item.priceNow: ", item.priceNow);
+            this.prodectId.push({ id: item._id, num: item.num });
         });
-
-        this.setComname("orderwait");
+        console.log("this.prodectId: ", this.prodectId);
     },
 
     methods: {
@@ -175,10 +172,7 @@ export default {
             this.setIschoose(1);
             this.$router.push("./address");
         },
-        ...mapMutations({
-            setPays: "SET_PAYS",
-            setIschoose: "SET_ISCHOOSE"
-        })
+        ...mapMutations({})
     }
 };
 </script>
